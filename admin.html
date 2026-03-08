@@ -184,6 +184,9 @@
   </div>
   <input type="password" id="admin-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')login()">
   <button onclick="login()">로그인</button>
+  <button id="biometric-btn" onclick="biometricLogin()" style="display:none; margin-top:0.5rem; background:#2e2018; border:1px solid rgba(138,111,85,0.3);">
+    <span style="font-size:1.2rem;">🔐</span> Face ID / 생체인증
+  </button>
   <div class="login-error" id="login-error">비밀번호가 틀렸습니다</div>
 </div>
 
@@ -403,14 +406,111 @@ async function sha256(text) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
+// ── BIOMETRIC AUTH (WebAuthn) ──
+const CRED_KEY = 'byssal_admin_cred';
+
+function isBiometricAvailable() {
+  return window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable;
+}
+
+async function checkBiometric() {
+  if (!isBiometricAvailable()) return;
+  try {
+    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if (available && localStorage.getItem(CRED_KEY)) {
+      document.getElementById('biometric-btn').style.display = 'block';
+    }
+  } catch(e) {}
+}
+
+async function registerBiometric() {
+  if (!isBiometricAvailable()) return;
+  try {
+    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if (!available) { showToast('이 기기는 생체인증을 지원하지 않습니다', true); return; }
+
+    const userId = new Uint8Array(16);
+    crypto.getRandomValues(userId);
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: 'BySsal Admin', id: location.hostname },
+        user: { id: userId, name: 'admin', displayName: 'BySsal Admin' },
+        pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+        timeout: 60000
+      }
+    });
+
+    if (credential) {
+      const credData = {
+        id: credential.id,
+        rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
+        type: credential.type
+      };
+      localStorage.setItem(CRED_KEY, JSON.stringify(credData));
+      showToast('✅ 생체인증이 등록되었습니다! 다음부터 Face ID로 로그인 가능');
+    }
+  } catch(e) {
+    console.error('Biometric registration failed:', e);
+    showToast('생체인증 등록 실패', true);
+  }
+}
+
+async function biometricLogin() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(CRED_KEY));
+    if (!stored) return;
+
+    const challenge = new Uint8Array(32);
+    crypto.getRandomValues(challenge);
+    const rawId = Uint8Array.from(atob(stored.rawId), c => c.charCodeAt(0));
+
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        allowCredentials: [{ id: rawId, type: 'public-key', transports: ['internal'] }],
+        userVerification: 'required',
+        timeout: 60000
+      }
+    });
+
+    if (assertion) {
+      enterApp();
+    }
+  } catch(e) {
+    console.error('Biometric login failed:', e);
+    document.getElementById('login-error').textContent = '생체인증 실패. 비밀번호로 로그인하세요.';
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  loadConfig();
+  loadOrders();
+}
+
+// Show biometric button on load if registered
+checkBiometric();
+
 async function login() {
   const pw = document.getElementById('admin-pw').value;
   const hash = await sha256(pw);
   if (hash === ADMIN_PW_HASH) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    loadConfig();
-    loadOrders();
+    enterApp();
+    // Offer biometric registration if not yet registered
+    if (isBiometricAvailable() && !localStorage.getItem(CRED_KEY)) {
+      setTimeout(() => {
+        if (confirm('🔐 Face ID / 생체인증을 등록하시겠습니까?\n다음부터 비밀번호 없이 로그인할 수 있습니다.')) {
+          registerBiometric();
+        }
+      }, 500);
+    }
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
