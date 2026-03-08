@@ -147,11 +147,11 @@
 
   /* PACKAGING OPTIONS */
   .sub-option { padding-left: 1rem; margin-top: -0.5rem; margin-bottom: 0.8rem; border-left: 2px solid var(--fg-subtle); }
-  .sub-option label:first-child { font-size: 0.7rem; color: var(--fg-dim); }
-  .flavor-checks { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
-  .flavor-check { display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; cursor: pointer; padding: 0.3rem 0.6rem; border: 1px solid var(--fg-subtle); background: var(--white); transition: all 0.2s; }
-  .flavor-check:has(input:checked) { border-color: var(--accent); background: rgba(138,111,85,0.08); color: var(--accent); }
-  .flavor-check input { display: none; }
+  .sub-option > label:first-child { font-size: 0.7rem; color: var(--fg-dim); display: block; margin-bottom: 0.4rem; }
+  .flavor-rows { display: flex; flex-direction: column; gap: 0.3rem; }
+  .flavor-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
+  .flavor-row .fl-name { min-width: 70px; }
+  .flavor-row .qty-control { transform: scale(0.85); transform-origin: left; }
 
   .pkg-option {
     display: flex; align-items: center; gap: 0.8rem;
@@ -262,119 +262,106 @@
     <div id="product-list">
 
       <!-- 쌀오란다 -->
-      <div class="product-row" data-product="쌀오란다" data-unit="1900">
-        <span class="prod-emoji">🍘</span>
-        <span class="prod-name">쌀오란다</span>
-        <span class="prod-price">₩1,900/개</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="쌀오란다" data-unit="1900">
+        <div class="product-row">
+          <span class="prod-emoji">🍘</span>
+          <span class="prod-name">쌀오란다</span>
+          <span class="prod-price">₩1,900/개</span>
         </div>
-      </div>
-      <div class="form-row sub-option">
-        <label>맛 선택 (종류 수량 상관없이 주문 가능)</label>
-        <div class="flavor-checks" id="oranda-flavors">
-          <label class="flavor-check"><input type="checkbox" value="감태"> 감태</label>
-          <label class="flavor-check"><input type="checkbox" value="견과"> 견과</label>
-          <label class="flavor-check"><input type="checkbox" value="커피땅콩"> 커피땅콩</label>
-          <label class="flavor-check"><input type="checkbox" value="검은깨"> 검은깨</label>
-          <label class="flavor-check"><input type="checkbox" value="인절미"> 인절미</label>
+        <div class="form-row sub-option">
+          <label>맛별 수량 선택</label>
+          <div class="flavor-rows" id="oranda-flavors">
+            <div class="flavor-row"><span class="fl-name">감태</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">견과</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">커피땅콩</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">검은깨</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">인절미</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
 
       <!-- 쌀찜카스테라 -->
-      <div class="product-row" data-product="쌀찜카스테라" data-unit="25000">
-        <span class="prod-emoji">🍰</span>
-        <span class="prod-name">쌀찜카스테라 (1세트 10개입)</span>
-        <span class="prod-price">₩25,000/세트</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="쌀찜카스테라" data-unit="25000">
+        <div class="product-row">
+          <span class="prod-emoji">🍰</span>
+          <span class="prod-name">쌀찜카스테라 (1세트 10개입)</span>
+          <span class="prod-price">₩25,000/세트</span>
         </div>
-      </div>
-      <div class="form-row sub-option">
-        <label>맛 선택 (1세트당 2가지 맛 선택 가능)</label>
-        <div class="flavor-checks" id="castella-flavors">
-          <label class="flavor-check"><input type="checkbox" value="단호박"> 단호박</label>
-          <label class="flavor-check"><input type="checkbox" value="쑥"> 쑥</label>
-          <label class="flavor-check"><input type="checkbox" value="초코"> 초코</label>
-          <label class="flavor-check"><input type="checkbox" value="말차"> 말차</label>
+        <div class="form-row sub-option">
+          <label>맛별 세트 수량 (1세트 = 투톤 2가지 맛)</label>
+          <div class="flavor-rows" id="castella-flavors">
+            <div class="flavor-row"><span class="fl-name">단호박 & 쑥</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">초코 & 말차</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">비트 & 쑥</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
 
       <!-- 미니쌀쿠키 -->
-      <div class="product-row" data-product="미니쌀쿠키" data-unit="7000">
-        <span class="prod-emoji">🍪</span>
-        <span class="prod-name">미니쌀쿠키 (1통)</span>
-        <span class="prod-price">₩7,000/통</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="미니쌀쿠키" data-unit="7000">
+        <div class="product-row">
+          <span class="prod-emoji">🍪</span>
+          <span class="prod-name">미니쌀쿠키 (1통)</span>
+          <span class="prod-price">₩7,000/통</span>
         </div>
-      </div>
-      <div class="form-row sub-option">
-        <label>맛 선택</label>
-        <div class="flavor-checks" id="cookie-flavors">
-          <label class="flavor-check"><input type="checkbox" value="플레인"> 플레인</label>
-          <label class="flavor-check"><input type="checkbox" value="초코"> 초코</label>
+        <div class="form-row sub-option">
+          <label>맛별 수량 선택</label>
+          <div class="flavor-rows" id="cookie-flavors">
+            <div class="flavor-row"><span class="fl-name">혼합</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">플레인</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">초코</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
 
       <!-- 찰꿀빵 -->
-      <div class="product-row" data-product="찰꿀빵" data-unit="30000">
-        <span class="prod-emoji">🍞</span>
-        <span class="prod-name">찰꿀빵 (1세트 10개)</span>
-        <span class="prod-price">₩30,000/세트</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="찰꿀빵" data-unit="30000">
+        <div class="product-row">
+          <span class="prod-emoji">🍞</span>
+          <span class="prod-name">찰꿀빵 (1세트 10개)</span>
+          <span class="prod-price">₩30,000/세트</span>
         </div>
-      </div>
-      <div class="form-row sub-option">
-        <label>맛 선택 (1~2가지 선택, 5개씩 구성)</label>
-        <div class="flavor-checks" id="bread-flavors">
-          <label class="flavor-check"><input type="checkbox" value="모카시나몬"> 모카시나몬</label>
-          <label class="flavor-check"><input type="checkbox" value="쑥"> 쑥</label>
-          <label class="flavor-check"><input type="checkbox" value="홍국"> 홍국</label>
-          <label class="flavor-check"><input type="checkbox" value="초코"> 초코</label>
+        <div class="form-row sub-option">
+          <label>맛별 세트 수량 (1~2가지 선택, 5개씩 구성)</label>
+          <div class="flavor-rows" id="bread-flavors">
+            <div class="flavor-row"><span class="fl-name">모카시나몬</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">쑥</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">홍국</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">초코</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
 
       <!-- 찹쌀크럼블 -->
-      <div class="product-row" data-product="찹쌀크럼블" data-unit="35000">
-        <span class="prod-emoji">🥧</span>
-        <span class="prod-name">찹쌀크럼블 (1판 18×18cm, 9조각)</span>
-        <span class="prod-price">₩35,000/판</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="찹쌀크럼블" data-unit="35000">
+        <div class="product-row">
+          <span class="prod-emoji">🥧</span>
+          <span class="prod-name">찹쌀크럼블 (1판 18×18cm, 9조각)</span>
+          <span class="prod-price">₩35,000/판</span>
         </div>
-      </div>
-      <div class="form-row sub-option">
-        <label>맛 선택 (1판에 1가지 맛)</label>
-        <select id="crumble-flavor">
-          <option value="애플시나몬">애플시나몬 (수제 사과조림)</option>
-          <option value="단호박">단호박 (찐 단호박 & 완두콩)</option>
-          <option value="쑥">쑥 (국내산쑥 & 호두 & 팥)</option>
-          <option value="초코">초코 (발로나초코 & 호두)</option>
-          <option value="흑미무화과">흑미무화과 (흑미 & 무화과 & 호두)</option>
-        </select>
+        <div class="form-row sub-option">
+          <label>맛별 판 수량</label>
+          <div class="flavor-rows" id="crumble-flavors">
+            <div class="flavor-row"><span class="fl-name">애플시나몬</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">단호박</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">쑥</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">초코</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">흑미무화과</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
+        </div>
       </div>
 
       <!-- 호두정과 -->
-      <div class="product-row" data-product="호두정과" data-unit="12000">
-        <span class="prod-emoji">🥜</span>
-        <span class="prod-name">호두정과 (1통 120g)</span>
-        <span class="prod-price">₩12,000/통</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="호두정과" data-unit="12000">
+        <div class="product-row">
+          <span class="prod-emoji">🥜</span>
+          <span class="prod-name">호두정과 (1통 120g)</span>
+          <span class="prod-price">₩12,000/통</span>
+        </div>
+        <div class="form-row sub-option">
+          <div class="flavor-rows">
+            <div class="flavor-row"><span class="fl-name">호두정과</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
 
@@ -811,6 +798,13 @@ function changeQty(btn, delta) {
   input.value = val;
 }
 
+function changeFlavorQty(btn, delta) {
+  const input = btn.parentElement.querySelector('.fl-qty');
+  let val = parseInt(input.value) + delta;
+  if (val < 0) val = 0;
+  input.value = val;
+}
+
 function generateOrder() {
   const name = document.getElementById('cust-name').value.trim();
   const phone = document.getElementById('cust-phone').value.trim();
@@ -824,16 +818,42 @@ function generateOrder() {
   const items = [];
   let subtotal = 0;
   const activeSection = orderType === '선물세트' ? '#section-gift' : orderType === '답례품' ? '#section-return' : '#section-normal';
-  document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
-    const qty = parseInt(row.querySelector('.qty-val').value);
-    if (qty > 0) {
-      const product = row.dataset.product;
-      const unit = parseInt(row.dataset.unit);
-      const total = qty * unit;
-      subtotal += total;
-      items.push(`  · ${product} × ${qty}개 = ₩${total.toLocaleString()}`);
-    }
-  });
+
+  if (orderType === '일반주문') {
+    // Flavor-based quantity collection
+    document.querySelectorAll(`${activeSection} .product-group`).forEach(group => {
+      const product = group.dataset.product;
+      const unit = parseInt(group.dataset.unit);
+      const flavorRows = group.querySelectorAll('.flavor-row');
+      const flavorDetails = [];
+      let totalQty = 0;
+      flavorRows.forEach(row => {
+        const qty = parseInt(row.querySelector('.fl-qty').value);
+        if (qty > 0) {
+          const name = row.querySelector('.fl-name').textContent;
+          flavorDetails.push(`${name} ${qty}개`);
+          totalQty += qty;
+        }
+      });
+      if (totalQty > 0) {
+        const total = totalQty * unit;
+        subtotal += total;
+        items.push(`  · ${product} × ${totalQty}개 = ₩${total.toLocaleString()}`);
+        items.push(`    (${flavorDetails.join(', ')})`);
+      }
+    });
+  } else {
+    document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
+      const qty = parseInt(row.querySelector('.qty-val')?.value || 0);
+      if (qty > 0) {
+        const product = row.dataset.product;
+        const unit = parseInt(row.dataset.unit);
+        const total = qty * unit;
+        subtotal += total;
+        items.push(`  · ${product} × ${qty}개 = ₩${total.toLocaleString()}`);
+      }
+    });
+  }
 
   // Cake options
   let cakeInfo = '';
@@ -905,23 +925,7 @@ function generateOrder() {
 
   if (cakeInfo) text += cakeInfo + '\n';
 
-  // 일반주문 맛 선택 정보
-  if (orderType === '일반주문') {
-    const flavors = [];
-    const oFlavors = [...document.querySelectorAll('#oranda-flavors input:checked')].map(c=>c.value);
-    if (oFlavors.length) flavors.push(`  · 쌀오란다 맛: ${oFlavors.join(', ')}`);
-    const cFlavors = [...document.querySelectorAll('#castella-flavors input:checked')].map(c=>c.value);
-    if (cFlavors.length) flavors.push(`  · 쌀찜카스테라 맛: ${cFlavors.join(', ')}`);
-    const ckFlavors = [...document.querySelectorAll('#cookie-flavors input:checked')].map(c=>c.value);
-    if (ckFlavors.length) flavors.push(`  · 미니쌀쿠키 맛: ${ckFlavors.join(', ')}`);
-    const bFlavors = [...document.querySelectorAll('#bread-flavors input:checked')].map(c=>c.value);
-    if (bFlavors.length) flavors.push(`  · 찰꿀빵 맛: ${bFlavors.join(', ')}`);
-    const crumbleFl = document.getElementById('crumble-flavor');
-    // Only include crumble flavor if crumble is ordered
-    const crumbleQty = document.querySelector('[data-product="찹쌀크럼블"] .qty-val');
-    if (crumbleQty && parseInt(crumbleQty.value) > 0) flavors.push(`  · 찹쌀크럼블 맛: ${crumbleFl.value}`);
-    if (flavors.length) text += `\n🍽️ 맛 선택\n${flavors.join('\n')}\n`;
-  }
+  // 일반주문: 맛별 수량은 이미 items에 포함됨
 
   // 선물세트 추가 정보
   if (orderType === '선물세트') {
@@ -971,12 +975,20 @@ byssal.vercel.app 에서 주문
     receipt: receipt !== '필요없음' ? receipt : '',
     memo, timestamp: new Date().toISOString()
   };
-  document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
-    const qty = parseInt(row.querySelector('.qty-val').value);
-    if (qty > 0) {
-      orderData.items.push({ name: row.dataset.product, qty, unit: parseInt(row.dataset.unit) });
-    }
-  });
+  if (orderType === '일반주문') {
+    document.querySelectorAll(`${activeSection} .product-group`).forEach(group => {
+      const product = group.dataset.product;
+      const unit = parseInt(group.dataset.unit);
+      let totalQty = 0;
+      group.querySelectorAll('.fl-qty').forEach(input => { totalQty += parseInt(input.value); });
+      if (totalQty > 0) orderData.items.push({ name: product, qty: totalQty, unit });
+    });
+  } else {
+    document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
+      const qty = parseInt(row.querySelector('.qty-val')?.value || 0);
+      if (qty > 0) orderData.items.push({ name: row.dataset.product, qty, unit: parseInt(row.dataset.unit) });
+    });
+  }
   if (orderType === '앙금떡케이크') {
     orderData.cakeInfo = document.getElementById('cake-size').value;
   }
