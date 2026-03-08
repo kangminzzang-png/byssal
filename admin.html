@@ -382,6 +382,8 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="config-data.js"></script>
+<script src="orders-data.js"></script>
 <script>
 const API_URL = 'https://jsonblob.com/api/jsonBlob/019ccbd9-9baa-7bd9-b9df-c4be1c19c0b2';
 const ORDERS_URL = 'https://jsonblob.com/api/jsonBlob/019ccbdd-40a9-7894-8784-363d1356e9cf';
@@ -426,14 +428,18 @@ function switchTab(id, el) {
 
 // ── CONFIG ──
 async function loadConfig() {
-  try {
-    let res = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) res = await fetch('https://corsproxy.io/?' + encodeURIComponent(API_URL));
-    config = await res.json();
-    renderDates();
-    loadPrices();
-    document.getElementById('notice-input').value = config.notice || '';
-  } catch(e) { showToast('⚠️ 설정을 불러올 수 없습니다', true); }
+  // Load from local JS file first, then try API
+  if (typeof CONFIG_DATA !== 'undefined') {
+    config = JSON.parse(JSON.stringify(CONFIG_DATA));
+  } else {
+    try {
+      const res = await fetch(API_URL);
+      config = await res.json();
+    } catch(e) { console.error('Config load failed:', e); }
+  }
+  renderDates();
+  loadPrices();
+  document.getElementById('notice-input').value = config.notice || '';
 }
 
 function loadPrices() {
@@ -511,28 +517,21 @@ async function saveConfig() {
 
 // ── ORDERS ──
 async function loadOrders() {
-  try {
-    const res = await fetch(ORDERS_URL, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    const data = JSON.parse(text);
-    allOrders = data.orders || [];
-    console.log('Orders loaded:', allOrders.length);
-    renderSummary();
-    renderRecentOrders();
-    renderHistory();
-    renderDashboard();
-  } catch(e) {
-    console.error('loadOrders error:', e);
-    // Fallback: try with no-cors proxy
+  // Load from local JS file first, then try API
+  if (typeof ORDERS_DATA !== 'undefined' && ORDERS_DATA.orders) {
+    allOrders = ORDERS_DATA.orders;
+    console.log('Orders loaded from local:', allOrders.length);
+  } else {
     try {
-      const res2 = await fetch('https://corsproxy.io/?' + encodeURIComponent(ORDERS_URL));
-      const data2 = await res2.json();
-      allOrders = data2.orders || [];
-      console.log('Orders loaded via proxy:', allOrders.length);
-      renderSummary(); renderRecentOrders(); renderHistory(); renderDashboard();
-    } catch(e2) { console.error('Proxy fallback also failed:', e2); }
+      const res = await fetch(ORDERS_URL);
+      const data = await res.json();
+      allOrders = data.orders || [];
+    } catch(e) { console.error('Orders load failed:', e); }
   }
+  renderSummary();
+  renderRecentOrders();
+  renderHistory();
+  renderDashboard();
 }
 
 function renderSummary() {
