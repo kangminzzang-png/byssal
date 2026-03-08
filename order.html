@@ -780,19 +780,26 @@ function setOrderType(el) {
   document.getElementById('cake-section').style.display = (orderType === '앙금떡케이크') ? 'block' : 'none';
 
   // Show/hide packaging options based on order type
-  const isCake = orderType === '앙금떡케이크';
-  document.getElementById('pkg-ribbon').closest('.pkg-option').style.display = isCake ? 'none' : '';
-  document.getElementById('pkg-sticker').closest('.pkg-option').style.display = isCake ? 'none' : '';
-  document.getElementById('pkg-bojagi').closest('.pkg-option').style.display = isCake ? 'none' : '';
-  document.getElementById('pkg-cakebox').closest('.pkg-option').style.display = '';
-  // Auto-check cake box for cake orders
-  if (isCake) {
-    document.getElementById('pkg-ribbon').checked = false;
-    document.getElementById('pkg-sticker').checked = false;
-    document.getElementById('pkg-bojagi').checked = false;
-    document.getElementById('pkg-cakebox').checked = true;
+  const pkgRibbon = document.getElementById('pkg-ribbon');
+  const pkgSticker = document.getElementById('pkg-sticker');
+  const pkgBojagi = document.getElementById('pkg-bojagi');
+  const pkgCakebox = document.getElementById('pkg-cakebox');
+  // Reset all
+  [pkgRibbon, pkgSticker, pkgBojagi, pkgCakebox].forEach(el => { el.checked = false; el.closest('.pkg-option').style.display = ''; });
+
+  if (orderType === '앙금떡케이크') {
+    // 케이크: 투명케이크상자만
+    pkgRibbon.closest('.pkg-option').style.display = 'none';
+    pkgSticker.closest('.pkg-option').style.display = 'none';
+    pkgBojagi.closest('.pkg-option').style.display = 'none';
+    pkgCakebox.checked = true;
+  } else if (orderType === '답례품') {
+    // 답례품: 리본상자 + 답례스티커만
+    pkgBojagi.closest('.pkg-option').style.display = 'none';
+    pkgCakebox.closest('.pkg-option').style.display = 'none';
   } else {
-    document.getElementById('pkg-cakebox').checked = false;
+    // 일반주문 + 선물세트: 리본상자, 답례스티커, 보자기 (케이크상자 제외)
+    pkgCakebox.closest('.pkg-option').style.display = 'none';
   }
 
   // Reset quantities when switching
