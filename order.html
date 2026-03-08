@@ -249,8 +249,8 @@
     </div>
   </div>
 
-  <!-- PRODUCTS -->
-  <div class="form-section">
+  <!-- PRODUCTS: 일반주문 -->
+  <div class="form-section order-section" id="section-normal">
     <h2>상품 선택</h2>
     <div id="product-list">
       <div class="product-row" data-product="쌀오란다" data-unit="1900">
@@ -323,6 +323,134 @@
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS: 선물세트 -->
+  <div class="form-section order-section" id="section-gift" style="display:none;">
+    <h2>선물세트 선택</h2>
+    <div class="gift-products">
+      <div class="product-row" data-product="쌀오란다 선물세트(8개입)" data-unit="20000">
+        <span class="prod-emoji">🎁</span>
+        <span class="prod-name">쌀오란다 선물세트 (8개입)</span>
+        <span class="prod-price">₩20,000</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+      <div class="product-row" data-product="쌀오란다+호두정과 세트" data-unit="29500">
+        <span class="prod-emoji">🎁</span>
+        <span class="prod-name">쌀오란다 + 호두정과 세트</span>
+        <span class="prod-price">₩29,500</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+      <div class="product-row" data-product="쌀오란다+미니쌀쿠키 세트" data-unit="24500">
+        <span class="prod-emoji">🎁</span>
+        <span class="prod-name">쌀오란다 + 미니쌀쿠키 세트</span>
+        <span class="prod-price">₩24,500</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+      <div class="product-row" data-product="종합 선물세트" data-unit="58700">
+        <span class="prod-emoji">🎁</span>
+        <span class="prod-name">종합 선물세트</span>
+        <span class="prod-price">₩58,700</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:1rem;">
+      <label>쌀오란다 맛 선택</label>
+      <select id="gift-oranda-flavor">
+        <option value="혼합(5가지맛)">혼합 (5가지맛)</option>
+        <option value="감태">감태</option>
+        <option value="인절미">인절미</option>
+        <option value="검은깨">검은깨</option>
+        <option value="견과">견과</option>
+        <option value="커피땅콩">커피땅콩</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- PRODUCTS: 답례품 -->
+  <div class="form-section order-section" id="section-return" style="display:none;">
+    <h2>답례품 구성</h2>
+    <p style="font-size:0.75rem; color:var(--fg-dim); margin-bottom:1rem;">답례품은 대량 주문 시 할인이 적용됩니다. 수량에 따라 상담 후 최종 가격이 확정됩니다.</p>
+    <div class="return-products">
+      <div class="product-row" data-product="미니쌀쿠키(답례)" data-unit="4500">
+        <span class="prod-emoji">🍪</span>
+        <span class="prod-name">미니쌀쿠키 (답례용)</span>
+        <span class="prod-price">₩4,500~/개</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+      <div class="product-row" data-product="쌀오란다(답례)" data-unit="5900">
+        <span class="prod-emoji">🍘</span>
+        <span class="prod-name">쌀오란다 세트 (답례용)</span>
+        <span class="prod-price">₩5,900~/세트</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+      <div class="product-row" data-product="쌀오란다+호두정과(답례)" data-unit="29500">
+        <span class="prod-emoji">🎁</span>
+        <span class="prod-name">쌀오란다 + 호두정과 세트 (답례용)</span>
+        <span class="prod-price">₩29,500~/세트</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
+          <input class="qty-val" type="number" value="0" min="0" readonly>
+          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:1rem;">
+      <label>답례품 용도</label>
+      <select id="return-purpose">
+        <option value="">선택해주세요</option>
+        <option value="돌잔치">돌잔치</option>
+        <option value="결혼">결혼</option>
+        <option value="회갑/칠순">회갑 / 칠순</option>
+        <option value="기업행사">기업 행사</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>행사 날짜</label>
+      <input type="date" id="return-event-date">
+    </div>
+    <div class="form-row">
+      <label>맛 선택</label>
+      <select id="return-flavor">
+        <option value="혼합">혼합</option>
+        <option value="플레인">플레인</option>
+        <option value="초코">초코</option>
+        <option value="감태">감태</option>
+        <option value="인절미">인절미</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>주문제작 스티커 필요 여부</label>
+      <select id="return-sticker">
+        <option value="불필요">불필요</option>
+        <option value="필요">필요 (+₩100/개)</option>
+      </select>
     </div>
   </div>
 
@@ -562,7 +690,15 @@ function setOrderType(el) {
   document.querySelectorAll('.order-type-tabs')[0].querySelectorAll('.order-type-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   orderType = el.dataset.type;
-  document.getElementById('cake-section').style.display = orderType === '앙금떡케이크' ? 'block' : 'none';
+
+  // Show/hide sections based on order type
+  document.getElementById('section-normal').style.display = (orderType === '일반주문') ? 'block' : 'none';
+  document.getElementById('section-gift').style.display = (orderType === '선물세트') ? 'block' : 'none';
+  document.getElementById('section-return').style.display = (orderType === '답례품') ? 'block' : 'none';
+  document.getElementById('cake-section').style.display = (orderType === '앙금떡케이크') ? 'block' : 'none';
+
+  // Reset quantities when switching
+  document.querySelectorAll('.qty-val').forEach(v => v.value = '0');
 }
 
 function setDelivery(el) {
@@ -589,10 +725,11 @@ function generateOrder() {
     return;
   }
 
-  // Collect products
+  // Collect products from active section only
   const items = [];
   let subtotal = 0;
-  document.querySelectorAll('.product-row').forEach(row => {
+  const activeSection = orderType === '선물세트' ? '#section-gift' : orderType === '답례품' ? '#section-return' : '#section-normal';
+  document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
     const qty = parseInt(row.querySelector('.qty-val').value);
     if (qty > 0) {
       const product = row.dataset.product;
@@ -673,6 +810,26 @@ function generateOrder() {
 
   if (cakeInfo) text += cakeInfo + '\n';
 
+  // 선물세트 추가 정보
+  if (orderType === '선물세트') {
+    const flavor = document.getElementById('gift-oranda-flavor').value;
+    text += `\n🎁 선물세트 옵션\n  · 쌀오란다 맛: ${flavor}\n`;
+  }
+
+  // 답례품 추가 정보
+  if (orderType === '답례품') {
+    const purpose = document.getElementById('return-purpose').value;
+    const eventDate = document.getElementById('return-event-date').value;
+    const flavor = document.getElementById('return-flavor').value;
+    const sticker = document.getElementById('return-sticker').value;
+    text += `\n💝 답례품 정보`;
+    if (purpose) text += `\n  · 용도: ${purpose}`;
+    if (eventDate) text += `\n  · 행사일: ${eventDate}`;
+    text += `\n  · 맛: ${flavor}`;
+    if (sticker === '필요') text += `\n  · 주문제작 스티커: 필요 (+₩100/개)`;
+    text += '\n';
+  }
+
   if (pkgs.length > 0) {
     text += `\n📦 포장\n  · ${pkgs.join('\n  · ')}\n`;
   }
@@ -701,7 +858,7 @@ byssal.vercel.app 에서 주문
     receipt: receipt !== '필요없음' ? receipt : '',
     memo, timestamp: new Date().toISOString()
   };
-  document.querySelectorAll('.product-row').forEach(row => {
+  document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
     const qty = parseInt(row.querySelector('.qty-val').value);
     if (qty > 0) {
       orderData.items.push({ name: row.dataset.product, qty, unit: parseInt(row.dataset.unit) });
