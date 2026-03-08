@@ -984,10 +984,14 @@ function generateOrder() {
   text += `\n🚚 수령 방법\n${deliveryInfo}\n`;
 
   const receiptEmail = document.getElementById('cust-receipt-email').value.trim();
+  if (receipt === '거래명세서' && !receiptEmail) {
+    alert('거래명세서 수신 이메일을 입력해주세요.');
+    return;
+  }
   if (receipt !== '필요없음') {
     text += `\n🧾 증빙서류\n  · ${receipt}`;
-    if (receiptNum) text += `\n  · 번호: ${receiptNum}`;
-    if (receiptEmail) text += `\n  · 이메일: ${receiptEmail}`;
+    if (receiptNum) text += `\n  · 발행번호: ${receiptNum}`;
+    if (receiptEmail) text += `\n  · 수신 이메일: ${receiptEmail}`;
     text += '\n';
   }
 
