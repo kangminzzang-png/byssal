@@ -427,7 +427,8 @@ function switchTab(id, el) {
 // ── CONFIG ──
 async function loadConfig() {
   try {
-    const res = await fetch(API_URL);
+    let res = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) res = await fetch('https://corsproxy.io/?' + encodeURIComponent(API_URL));
     config = await res.json();
     renderDates();
     loadPrices();
@@ -511,14 +512,27 @@ async function saveConfig() {
 // ── ORDERS ──
 async function loadOrders() {
   try {
-    const res = await fetch(ORDERS_URL);
-    const data = await res.json();
+    const res = await fetch(ORDERS_URL, { headers: { 'Accept': 'application/json' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const data = JSON.parse(text);
     allOrders = data.orders || [];
+    console.log('Orders loaded:', allOrders.length);
     renderSummary();
     renderRecentOrders();
     renderHistory();
     renderDashboard();
-  } catch(e) { console.error('loadOrders error:', e); }
+  } catch(e) {
+    console.error('loadOrders error:', e);
+    // Fallback: try with no-cors proxy
+    try {
+      const res2 = await fetch('https://corsproxy.io/?' + encodeURIComponent(ORDERS_URL));
+      const data2 = await res2.json();
+      allOrders = data2.orders || [];
+      console.log('Orders loaded via proxy:', allOrders.length);
+      renderSummary(); renderRecentOrders(); renderHistory(); renderDashboard();
+    } catch(e2) { console.error('Proxy fallback also failed:', e2); }
+  }
 }
 
 function renderSummary() {
