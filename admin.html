@@ -94,6 +94,22 @@
   }
   .toast.show { opacity: 1; }
 
+  /* PRICE MANAGEMENT */
+  .price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.5rem 0; border-bottom: 1px solid var(--subtle);
+  }
+  .price-row span { font-size: 0.8rem; }
+  .price-input-wrap {
+    display: flex; align-items: center; gap: 0.2rem;
+    font-size: 0.85rem; color: var(--accent); font-weight: 500;
+  }
+  .price-input {
+    width: 90px; padding: 0.4rem; border: 1px solid var(--subtle);
+    font-family: inherit; font-size: 0.85rem; text-align: right; color: var(--fg);
+  }
+  .price-input:focus { outline: none; border-color: var(--accent); }
+
   /* DASHBOARD */
   .dash-period { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
   .period-btn {
@@ -197,6 +213,40 @@
   <div class="section">
     <h2>📊 현재 상태</h2>
     <div id="status-display" style="font-size:0.8rem; color:var(--dim);"></div>
+  </div>
+
+  <!-- PRICE MANAGEMENT -->
+  <div class="section">
+    <h2>💲 상품 가격 관리</h2>
+    <p style="font-size:0.75rem; color:var(--dim); margin-bottom:1rem;">
+      가격을 수정하면 주문 폼과 상세 페이지에 즉시 반영됩니다.
+    </p>
+
+    <div class="price-group">
+      <h4 style="font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:0.8rem;">🍘 쌀 디저트</h4>
+      <div class="price-row"><span>쌀오란다 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="쌀오란다" min="0" step="100"></div></div>
+      <div class="price-row"><span>쌀찜카스테라 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="쌀찜카스테라" min="0" step="100"></div></div>
+      <div class="price-row"><span>미니쌀쿠키 (1통)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="미니쌀쿠키" min="0" step="100"></div></div>
+      <div class="price-row"><span>찰꿀빵 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="찰꿀빵" min="0" step="100"></div></div>
+      <div class="price-row"><span>찹쌀크럼블 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="찹쌀크럼블" min="0" step="100"></div></div>
+      <div class="price-row"><span>호두정과 (120g)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="호두정과" min="0" step="100"></div></div>
+      <div class="price-row"><span>데이츠 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="데이츠" min="0" step="100"></div></div>
+    </div>
+
+    <div class="price-group" style="margin-top:1.5rem;">
+      <h4 style="font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:0.8rem;">🎂 앙금떡케이크</h4>
+      <div class="price-row"><span>1호 (15cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_1호" min="0" step="1000"></div></div>
+      <div class="price-row"><span>2호 (18cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_2호" min="0" step="1000"></div></div>
+      <div class="price-row"><span>3호 (21cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_3호" min="0" step="1000"></div></div>
+      <div class="price-row"><span>4호 (24cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_4호" min="0" step="1000"></div></div>
+      <div class="price-row"><span>이단 1+3호</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_이단1+3" min="0" step="1000"></div></div>
+      <div class="price-row"><span>이단 2+4호</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_이단2+4" min="0" step="1000"></div></div>
+    </div>
+
+    <div class="price-group" style="margin-top:1.5rem;">
+      <h4 style="font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:0.8rem;">🍰 크럼블케이크</h4>
+      <div class="price-row"><span>1단 (2호)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="크럼블케이크_1단" min="0" step="1000"></div></div>
+    </div>
   </div>
 
   <!-- DASHBOARD -->
@@ -308,12 +358,35 @@ async function loadConfig() {
     const res = await fetch(API_URL);
     config = await res.json();
     renderDates();
+    loadPrices();
     document.getElementById('notice-input').value = config.notice || '';
     updateStatus();
   } catch(e) {
     showToast('⚠️ 설정을 불러올 수 없습니다', true);
   }
 }
+
+function loadPrices() {
+  if (!config.prices) return;
+  document.querySelectorAll('.price-input').forEach(input => {
+    const key = input.dataset.key;
+    if (config.prices[key] !== undefined) input.value = config.prices[key];
+  });
+}
+
+function collectPrices() {
+  if (!config.prices) config.prices = {};
+  document.querySelectorAll('.price-input').forEach(input => {
+    const key = input.dataset.key;
+    const val = parseInt(input.value);
+    if (!isNaN(val)) config.prices[key] = val;
+  });
+}
+
+// Listen for price changes
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('price-input')) markChanged();
+});
 
 function renderDates() {
   const list = document.getElementById('blocked-list');
@@ -381,6 +454,7 @@ function markChanged() {
 
 async function saveConfig() {
   config.notice = document.getElementById('notice-input').value.trim();
+  collectPrices();
   try {
     await fetch(API_URL, {
       method: 'PUT',

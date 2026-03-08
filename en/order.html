@@ -363,6 +363,16 @@ fetch(CONFIG_URL).then(r=>r.json()).then(cfg => {
     banner.textContent = '📢 ' + ORDER_NOTICE;
     document.body.appendChild(banner);
   }
+  if (cfg.prices) {
+    document.querySelectorAll('.product-row').forEach(row => {
+      const kr = row.dataset.kr;
+      if (cfg.prices[kr] !== undefined) {
+        row.dataset.unit = cfg.prices[kr];
+        const priceEl = row.querySelector('.prod-price');
+        if (priceEl) priceEl.textContent = '₩' + cfg.prices[kr].toLocaleString();
+      }
+    });
+  }
 }).catch(()=>{});
 // ═══════════════════════════════════════
 

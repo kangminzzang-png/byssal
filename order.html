@@ -501,6 +501,38 @@ fetch(CONFIG_URL).then(r=>r.json()).then(cfg => {
     banner.textContent = '📢 ' + ORDER_NOTICE;
     document.body.appendChild(banner);
   }
+  // Update prices from admin
+  if (cfg.prices) {
+    document.querySelectorAll('.product-row').forEach(row => {
+      const name = row.dataset.product;
+      if (cfg.prices[name] !== undefined) {
+        row.dataset.unit = cfg.prices[name];
+        const priceEl = row.querySelector('.prod-price');
+        if (priceEl) priceEl.textContent = '₩' + cfg.prices[name].toLocaleString();
+      }
+    });
+    // Update cake prices
+    const cakeSelect = document.getElementById('cake-size');
+    if (cakeSelect && cfg.prices) {
+      const cakeMap = {
+        '앙금떡케이크_1호': '1호(15cm)',
+        '앙금떡케이크_2호': '2호(18cm)',
+        '앙금떡케이크_3호': '3호(21cm)',
+        '앙금떡케이크_4호': '4호(24cm)',
+        '앙금떡케이크_이단1+3': '이단 1+3호',
+        '앙금떡케이크_이단2+4': '이단 2+4호'
+      };
+      Array.from(cakeSelect.options).forEach(opt => {
+        Object.entries(cakeMap).forEach(([key, label]) => {
+          if (opt.value.includes(label.replace(' ','')) && cfg.prices[key]) {
+            const p = cfg.prices[key];
+            opt.value = `${label} ₩${p.toLocaleString()}`;
+            opt.textContent = `${label} — ₩${p.toLocaleString()}`;
+          }
+        });
+      });
+    }
+  }
 }).catch(()=>{});
 // ═══════════════════════════════════════
 
