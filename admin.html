@@ -272,9 +272,9 @@
       <div class="page-header"><h1>📈 매출 대시보드</h1><p>기간별 매출과 주문 추이를 확인합니다</p></div>
       <div class="section">
         <div class="dash-period">
-          <button class="period-btn active" onclick="setPeriod('week',this)">이번 주</button>
+          <button class="period-btn" onclick="setPeriod('week',this)">이번 주</button>
           <button class="period-btn" onclick="setPeriod('month',this)">이번 달</button>
-          <button class="period-btn" onclick="setPeriod('all',this)">전체</button>
+          <button class="period-btn active" onclick="setPeriod('all',this)">전체</button>
         </div>
         <div class="dash-cards">
           <div class="dash-card"><div class="dash-label">총 주문</div><div class="dash-value" id="d-total-orders">0</div></div>
@@ -292,9 +292,9 @@
       <div class="page-header"><h1>🏆 상품 분석</h1><p>상품별 판매량과 매출 비중을 분석합니다</p></div>
       <div class="section">
         <div class="dash-period">
-          <button class="period-btn active" onclick="setPeriod('week',this)">이번 주</button>
+          <button class="period-btn" onclick="setPeriod('week',this)">이번 주</button>
           <button class="period-btn" onclick="setPeriod('month',this)">이번 달</button>
-          <button class="period-btn" onclick="setPeriod('all',this)">전체</button>
+          <button class="period-btn active" onclick="setPeriod('all',this)">전체</button>
         </div>
         <div class="dash-section"><h3>📊 상품별 판매량</h3><div id="product-ranking"></div></div>
         <div class="dash-section"><h3>📋 주문 유형별</h3><div id="order-type-chart"></div></div>
@@ -321,7 +321,7 @@ const ADMIN_PW_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab
 
 let config = { blocked_dates: [], notice: '', prices: {} };
 let allOrders = [];
-let currentPeriod = 'week';
+let currentPeriod = 'all';
 let hasChanges = false;
 
 // ── AUTH ──
@@ -448,7 +448,7 @@ async function loadOrders() {
     renderSummary();
     renderRecentOrders();
     renderDashboard();
-  } catch(e) {}
+  } catch(e) { console.error('loadOrders error:', e); }
 }
 
 function renderSummary() {
@@ -518,9 +518,10 @@ function renderDashboard() {
     ? typeSorted.map(([n,c]) => `<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill" style="width:${c/maxType*100}%;background:#a8917a;"></div></div><div class="bar-val">${c}건</div></div>`).join('')
     : '<div class="empty-msg">데이터 없음</div>';
 
-  // Charts
+  // Charts — dynamic date range
   const dayMap = {}, revMap = {}, days = [];
-  for (let i = 13; i >= 0; i--) { const d = new Date(Date.now()-i*86400000); const k = d.toISOString().slice(0,10); days.push(k); dayMap[k]=0; revMap[k]=0; }
+  const numDays = currentPeriod === 'week' ? 7 : currentPeriod === 'month' ? 30 : 90;
+  for (let i = numDays-1; i >= 0; i--) { const d = new Date(Date.now()-i*86400000); const k = d.toISOString().slice(0,10); days.push(k); dayMap[k]=0; revMap[k]=0; }
   filtered.forEach(o => { if (o.timestamp) { const k = o.timestamp.slice(0,10); if (dayMap[k]!==undefined) { dayMap[k]++; revMap[k]+=(o.subtotal||0); } } });
 
   const labels = days.map(d => d.slice(5));
