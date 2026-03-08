@@ -173,6 +173,32 @@
   .cust-stat-label { font-size: 0.6rem; color: var(--dim); margin-top: 0.2rem; }
   .vip-badge { display: inline-block; font-size: 0.5rem; padding: 0.1rem 0.3rem; background: #d4a017; color: #fff; margin-left: 0.3rem; letter-spacing: 0.05em; }
 
+  /* CUSTOMER DETAIL */
+  .cust-detail-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 300; display: none; align-items: center; justify-content: center; }
+  .cust-detail-overlay.show { display: flex; }
+  .cust-detail { background: var(--white); width: 92%; max-width: 560px; max-height: 85vh; overflow-y: auto; padding: 1.5rem; position: relative; }
+  .cust-detail-close { position: absolute; top: 0.8rem; right: 1rem; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--dim); padding: 0; }
+  .cust-detail-header { margin-bottom: 1.2rem; }
+  .cust-detail-name { font-size: 1.2rem; font-weight: 600; color: var(--dark); }
+  .cust-detail-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin: 1rem 0; }
+  .cust-d-stat { background: var(--bg); padding: 0.6rem; text-align: center; }
+  .cust-d-stat-num { font-size: 1rem; font-weight: 600; color: var(--accent); }
+  .cust-d-stat-label { font-size: 0.55rem; color: var(--dim); margin-top: 0.15rem; }
+  .cust-detail h3 { font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; margin: 1rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--subtle); }
+  .cust-order-item { padding: 0.6rem 0; border-bottom: 1px solid var(--subtle); }
+  .cust-order-item:last-child { border-bottom: none; }
+  .cust-order-num { font-size: 0.65rem; color: var(--accent); font-weight: 500; }
+  .cust-order-date { font-size: 0.6rem; color: var(--dim); margin-left: 0.5rem; }
+  .cust-order-products { font-size: 0.7rem; margin-top: 0.3rem; }
+  .cust-order-amount { font-size: 0.75rem; font-weight: 600; float: right; }
+  .cust-order-memo { font-size: 0.6rem; color: var(--dim); margin-top: 0.2rem; font-style: italic; }
+  .cust-product-breakdown { font-size: 0.7rem; }
+  .cust-product-row { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid var(--subtle); }
+  .cust-product-row:last-child { border-bottom: none; }
+  .cust-timeline { position: relative; padding-left: 1rem; }
+  .cust-timeline::before { content: ''; position: absolute; left: 3px; top: 0; bottom: 0; width: 2px; background: var(--subtle); }
+  .cust-timeline-dot { position: absolute; left: 0; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; margin-top: 0.3rem; }
+
   /* SAVE BAR */
   .save-bar { position: fixed; bottom: 0; left: var(--sidebar-w); right: 0; padding: 0.8rem 2rem; background: var(--accent); display: none; z-index: 50; }
   .save-bar.visible { display: flex; align-items: center; justify-content: space-between; }
@@ -212,6 +238,13 @@
     <span style="font-size:1.2rem;">🔐</span> Face ID / 생체인증
   </button>
   <div class="login-error" id="login-error">비밀번호가 틀렸습니다</div>
+</div>
+
+<!-- CUSTOMER DETAIL OVERLAY -->
+<div class="cust-detail-overlay" id="cust-overlay" onclick="if(event.target===this)closeCustDetail()">
+  <div class="cust-detail" id="cust-detail-content">
+    <button class="cust-detail-close" onclick="closeCustDetail()">✕</button>
+  </div>
 </div>
 
 <!-- APP SHELL -->
@@ -954,7 +987,7 @@ function renderCustomers() {
     const firstDate = c.firstOrder !== '9999' ? c.firstOrder.slice(0,10) : '';
     const dateRange = firstDate && firstDate !== lastDate ? `${firstDate} ~ ${lastDate}` : lastDate;
 
-    return `<div class="customer-card">
+    return `<div class="customer-card" style="cursor:pointer;" onclick="openCustDetail('${c.name.replace(/'/g,"\\'")}')">
       <div class="customer-rank ${rankClass}">${i+1}</div>
       <div class="customer-info">
         <div class="customer-name">${c.name}${vip}${repeat}</div>
@@ -967,6 +1000,100 @@ function renderCustomers() {
       </div>
     </div>`;
   }).join('');
+}
+
+function openCustDetail(name) {
+  // Gather all orders for this customer
+  const orders = allOrders.filter(o => o.name === name);
+  if (!orders.length) return;
+
+  // Group by orderNum
+  const grouped = {};
+  orders.forEach(o => {
+    if (!grouped[o.orderNum]) grouped[o.orderNum] = { orderNum: o.orderNum, timestamp: o.timestamp, items: [], totalAmount: 0, memos: [] };
+    const g = grouped[o.orderNum];
+    (o.items||[]).forEach(i => g.items.push(i));
+    g.totalAmount += (o.subtotal || 0);
+    if (o.memo) g.memos.push(o.memo);
+    if (o.timestamp > g.timestamp) g.timestamp = o.timestamp;
+  });
+  const uniqueOrders = Object.values(grouped).sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+
+  // Stats
+  const totalSpent = uniqueOrders.reduce((s,o) => s + o.totalAmount, 0);
+  const orderCount = uniqueOrders.length;
+  const avgOrder = orderCount ? Math.round(totalSpent / orderCount) : 0;
+
+  // Product breakdown
+  const prodMap = {};
+  orders.forEach(o => {
+    (o.items||[]).forEach(i => {
+      const n = i.name;
+      if (!prodMap[n]) prodMap[n] = { name: n, qty: 0, amount: 0 };
+      prodMap[n].qty += (i.qty || 0);
+      prodMap[n].amount += (o.subtotal || 0);
+    });
+  });
+  const prods = Object.values(prodMap).sort((a,b) => b.amount - a.amount);
+
+  // First & last
+  const firstOrder = uniqueOrders[uniqueOrders.length - 1];
+  const lastOrder = uniqueOrders[0];
+  const firstDate = firstOrder ? firstOrder.timestamp.slice(0,10) : '—';
+  const lastDate = lastOrder ? lastOrder.timestamp.slice(0,10) : '—';
+
+  const vip = totalSpent >= 100000 ? '<span class="vip-badge" style="font-size:0.6rem;">VIP</span>' : '';
+
+  const el = document.getElementById('cust-detail-content');
+  el.innerHTML = `
+    <button class="cust-detail-close" onclick="closeCustDetail()">✕</button>
+    <div class="cust-detail-header">
+      <div class="cust-detail-name">${name} ${vip}</div>
+      <div style="font-size:0.65rem; color:var(--dim); margin-top:0.3rem;">${firstDate} ~ ${lastDate} · ${orderCount}건 주문</div>
+    </div>
+
+    <div class="cust-detail-stats">
+      <div class="cust-d-stat"><div class="cust-d-stat-num">₩${totalSpent.toLocaleString()}</div><div class="cust-d-stat-label">총 구매금액</div></div>
+      <div class="cust-d-stat"><div class="cust-d-stat-num">${orderCount}건</div><div class="cust-d-stat-label">총 주문 횟수</div></div>
+      <div class="cust-d-stat"><div class="cust-d-stat-num">₩${avgOrder.toLocaleString()}</div><div class="cust-d-stat-label">평균 주문금액</div></div>
+    </div>
+
+    <h3>🛍️ 구매 상품 내역</h3>
+    <div class="cust-product-breakdown">
+      ${prods.filter(p => p.name !== '답례 스티커' && p.name !== '기타').map(p => `
+        <div class="cust-product-row">
+          <span>${p.name} × ${p.qty}</span>
+          <span style="font-weight:500;">₩${p.amount.toLocaleString()}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <h3>📋 주문 이력</h3>
+    <div class="cust-timeline">
+      ${uniqueOrders.map(o => {
+        const items = o.items.map(i => `${i.name} ×${i.qty}`).join(', ');
+        const memos = o.memos.filter(m => m).join(' / ');
+        return `<div class="cust-order-item" style="position:relative;">
+          <div class="cust-timeline-dot"></div>
+          <div>
+            <span class="cust-order-num">${o.orderNum}</span>
+            <span class="cust-order-date">${o.timestamp ? o.timestamp.slice(0,10) : '—'}</span>
+            <span class="cust-order-amount">₩${o.totalAmount.toLocaleString()}</span>
+          </div>
+          <div class="cust-order-products">${items}</div>
+          ${memos ? `<div class="cust-order-memo">${memos}</div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  document.getElementById('cust-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCustDetail() {
+  document.getElementById('cust-overlay').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
 function showToast(msg, isError) {
