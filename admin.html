@@ -235,6 +235,15 @@
     <div class="tab-panel" id="tab-history">
       <div class="page-header"><h1>📜 주문 이력</h1><p>전체 주문 내역을 검색하고 조회합니다</p></div>
       <div class="section">
+        <div style="display:flex; gap:0.3rem; margin-bottom:0.8rem; flex-wrap:wrap;" id="hist-period-btns">
+          <button class="period-btn" onclick="setHistPeriod('this-week',this)">이번 주</button>
+          <button class="period-btn" onclick="setHistPeriod('this-month',this)">이번 달</button>
+          <button class="period-btn" onclick="setHistPeriod('last-month',this)">지난달</button>
+          <button class="period-btn" onclick="setHistPeriod('2-months',this)">지지난달</button>
+          <button class="period-btn" onclick="setHistPeriod('3-months',this)">최근 3개월</button>
+          <button class="period-btn" onclick="setHistPeriod('6-months',this)">최근 6개월</button>
+          <button class="period-btn active" onclick="setHistPeriod('all',this)">전체</button>
+        </div>
         <div class="history-filters">
           <input type="text" id="hist-search" placeholder="🔍 주문번호, 이름, 상품 검색" style="flex:2; min-width:180px;" oninput="renderHistory()">
           <select id="hist-source" onchange="renderHistory()">
@@ -606,6 +615,44 @@ function renderDashboard() {
 // ── HISTORY ──
 let histPage = 0;
 const HIST_PER_PAGE = 20;
+
+function setHistPeriod(period, btn) {
+  document.querySelectorAll('#hist-period-btns .period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const now = new Date();
+  const fromEl = document.getElementById('hist-from');
+  const toEl = document.getElementById('hist-to');
+  toEl.value = now.toISOString().slice(0,10);
+
+  if (period === 'all') {
+    fromEl.value = '';
+    toEl.value = '';
+  } else if (period === 'this-week') {
+    const d = new Date(now); d.setDate(d.getDate() - d.getDay());
+    fromEl.value = d.toISOString().slice(0,10);
+  } else if (period === 'this-month') {
+    fromEl.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  } else if (period === 'last-month') {
+    const lm = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    const le = new Date(now.getFullYear(), now.getMonth(), 0);
+    fromEl.value = lm.toISOString().slice(0,10);
+    toEl.value = le.toISOString().slice(0,10);
+  } else if (period === '2-months') {
+    const m2 = new Date(now.getFullYear(), now.getMonth()-2, 1);
+    const m2e = new Date(now.getFullYear(), now.getMonth()-1, 0);
+    fromEl.value = m2.toISOString().slice(0,10);
+    toEl.value = m2e.toISOString().slice(0,10);
+  } else if (period === '3-months') {
+    const d = new Date(now); d.setMonth(d.getMonth()-3);
+    fromEl.value = d.toISOString().slice(0,10);
+  } else if (period === '6-months') {
+    const d = new Date(now); d.setMonth(d.getMonth()-6);
+    fromEl.value = d.toISOString().slice(0,10);
+  }
+  histPage = 0;
+  renderHistory();
+}
 
 function renderHistory() {
   const search = (document.getElementById('hist-search').value || '').toLowerCase();
