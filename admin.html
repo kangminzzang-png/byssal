@@ -152,6 +152,27 @@
   .page-nav button { padding: 0.3rem 0.7rem; border: 1px solid var(--subtle); background: var(--white); font-family: inherit; font-size: 0.7rem; cursor: pointer; }
   .page-nav button.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
 
+  /* CUSTOMERS */
+  .customer-card { background: var(--white); border: 1px solid var(--subtle); padding: 0.8rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.8rem; }
+  .customer-card:hover { border-color: var(--accent); }
+  .customer-rank { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 600; flex-shrink: 0; }
+  .customer-rank.gold { background: #d4a017; }
+  .customer-rank.silver { background: #8a8a8a; }
+  .customer-rank.bronze { background: #a0522d; }
+  .customer-info { flex: 1; min-width: 0; }
+  .customer-name { font-weight: 600; font-size: 0.8rem; color: var(--dark); }
+  .customer-meta { font-size: 0.65rem; color: var(--dim); margin-top: 0.15rem; }
+  .customer-stats { text-align: right; flex-shrink: 0; }
+  .customer-amount { font-weight: 600; font-size: 0.8rem; color: var(--accent); }
+  .customer-count { font-size: 0.6rem; color: var(--dim); }
+  .customer-tags { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.3rem; }
+  .customer-tag { font-size: 0.5rem; padding: 0.1rem 0.35rem; background: rgba(138,111,85,0.08); color: var(--accent); border-radius: 2px; }
+  .customer-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1.2rem; }
+  .cust-stat-card { background: var(--white); border: 1px solid var(--subtle); padding: 0.8rem; text-align: center; }
+  .cust-stat-num { font-size: 1.3rem; font-weight: 600; color: var(--accent); }
+  .cust-stat-label { font-size: 0.6rem; color: var(--dim); margin-top: 0.2rem; }
+  .vip-badge { display: inline-block; font-size: 0.5rem; padding: 0.1rem 0.3rem; background: #d4a017; color: #fff; margin-left: 0.3rem; letter-spacing: 0.05em; }
+
   /* SAVE BAR */
   .save-bar { position: fixed; bottom: 0; left: var(--sidebar-w); right: 0; padding: 0.8rem 2rem; background: var(--accent); display: none; z-index: 50; }
   .save-bar.visible { display: flex; align-items: center; justify-content: space-between; }
@@ -207,6 +228,7 @@
       <div class="nav-group-label">주문 관리</div>
       <div class="nav-item active" onclick="switchTab('orders',this)"><span class="nav-icon">📋</span>주문 현황</div>
       <div class="nav-item" onclick="switchTab('history',this)"><span class="nav-icon">📜</span>주문 이력</div>
+      <div class="nav-item" onclick="switchTab('customers',this)"><span class="nav-icon">👥</span>고객 DB</div>
       <div class="nav-item" onclick="switchTab('blocked',this)"><span class="nav-icon">🔒</span>날짜 차단</div>
       <div class="nav-item" onclick="switchTab('notice',this)"><span class="nav-icon">📢</span>공지사항</div>
 
@@ -284,6 +306,24 @@
           </table>
         </div>
         <div class="page-nav" id="hist-pages"></div>
+      </div>
+    </div>
+
+    <!-- TAB: CUSTOMERS -->
+    <div class="tab-panel" id="tab-customers">
+      <div class="page-header"><h1>👥 고객 DB</h1><p>주문 데이터 기반 고객 분석</p></div>
+      <div class="section">
+        <div class="customer-summary" id="cust-summary"></div>
+        <div class="history-filters" style="margin-bottom:1rem;">
+          <input type="text" id="cust-search" placeholder="🔍 고객명 검색" style="flex:1; min-width:150px;" oninput="renderCustomers()">
+          <select id="cust-sort" onchange="renderCustomers()">
+            <option value="amount">총 구매금액순</option>
+            <option value="count">주문 횟수순</option>
+            <option value="recent">최근 주문순</option>
+            <option value="name">이름순</option>
+          </select>
+        </div>
+        <div id="cust-list"></div>
       </div>
     </div>
 
@@ -519,6 +559,7 @@ function switchTab(id, el) {
   // Re-render charts when switching to them
   if (id === 'dashboard' || id === 'products-analytics') renderDashboard();
   if (id === 'history') renderHistory();
+  if (id === 'customers') renderCustomers();
 }
 
 // ── CONFIG ──
@@ -854,6 +895,78 @@ function renderHistory() {
     phtml += `<button class="${i===histPage?'active':''}" onclick="histPage=${i};renderHistory()">${i+1}</button>`;
   }
   pagesEl.innerHTML = phtml;
+}
+
+// ── CUSTOMERS ──
+function buildCustomerDB() {
+  const customers = {};
+  allOrders.forEach(o => {
+    const name = o.name;
+    if (!name || name === '—') return;
+    if (!customers[name]) {
+      customers[name] = { name, orderCount: 0, totalSpent: 0, items: new Set(), lastOrder: '', firstOrder: '9999', orderNums: new Set() };
+    }
+    const c = customers[name];
+    // Count unique orders (not line items)
+    c.orderNums.add(o.orderNum);
+    c.totalSpent += (o.subtotal || 0);
+    (o.items||[]).forEach(i => c.items.add(i.name));
+    if (o.timestamp > c.lastOrder) c.lastOrder = o.timestamp;
+    if (o.timestamp < c.firstOrder) c.firstOrder = o.timestamp;
+  });
+  // Set orderCount to unique order numbers
+  Object.values(customers).forEach(c => { c.orderCount = c.orderNums.size; });
+  return Object.values(customers);
+}
+
+function renderCustomers() {
+  const customers = buildCustomerDB();
+  const search = (document.getElementById('cust-search').value || '').toLowerCase();
+  const sort = document.getElementById('cust-sort').value;
+
+  let filtered = customers.filter(c => !search || c.name.toLowerCase().includes(search));
+
+  if (sort === 'amount') filtered.sort((a,b) => b.totalSpent - a.totalSpent);
+  else if (sort === 'count') filtered.sort((a,b) => b.orderCount - a.orderCount);
+  else if (sort === 'recent') filtered.sort((a,b) => (b.lastOrder||'').localeCompare(a.lastOrder||''));
+  else if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+  // Summary
+  const totalCustomers = customers.length;
+  const totalRevenue = customers.reduce((s,c) => s + c.totalSpent, 0);
+  const repeatCustomers = customers.filter(c => c.orderCount > 1).length;
+  const avgPerCustomer = totalCustomers ? Math.round(totalRevenue / totalCustomers) : 0;
+
+  document.getElementById('cust-summary').innerHTML = `
+    <div class="cust-stat-card"><div class="cust-stat-num">${totalCustomers}</div><div class="cust-stat-label">총 고객 수</div></div>
+    <div class="cust-stat-card"><div class="cust-stat-num">${repeatCustomers}</div><div class="cust-stat-label">재주문 고객</div></div>
+    <div class="cust-stat-card"><div class="cust-stat-num">₩${avgPerCustomer.toLocaleString()}</div><div class="cust-stat-label">고객당 평균 매출</div></div>
+  `;
+
+  // List
+  const list = document.getElementById('cust-list');
+  list.innerHTML = filtered.map((c, i) => {
+    const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const vip = c.totalSpent >= 100000 ? '<span class="vip-badge">VIP</span>' : '';
+    const repeat = c.orderCount > 1 ? `<span style="color:#2e7d32; font-size:0.55rem; margin-left:0.2rem;">🔄 재주문</span>` : '';
+    const items = [...c.items].filter(n => n !== '답례 스티커' && n !== '기타');
+    const lastDate = c.lastOrder ? c.lastOrder.slice(0,10) : '—';
+    const firstDate = c.firstOrder !== '9999' ? c.firstOrder.slice(0,10) : '';
+    const dateRange = firstDate && firstDate !== lastDate ? `${firstDate} ~ ${lastDate}` : lastDate;
+
+    return `<div class="customer-card">
+      <div class="customer-rank ${rankClass}">${i+1}</div>
+      <div class="customer-info">
+        <div class="customer-name">${c.name}${vip}${repeat}</div>
+        <div class="customer-meta">${dateRange}</div>
+        <div class="customer-tags">${items.map(n => `<span class="customer-tag">${n}</span>`).join('')}</div>
+      </div>
+      <div class="customer-stats">
+        <div class="customer-amount">₩${c.totalSpent.toLocaleString()}</div>
+        <div class="customer-count">${c.orderCount}건 주문</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function showToast(msg, isError) {
