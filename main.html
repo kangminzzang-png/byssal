@@ -196,9 +196,8 @@
   .about-visual {
     aspect-ratio: 4/5;
     background: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 4rem; opacity: 0.3;
     border: 1px solid var(--fg-subtle);
+    overflow: hidden;
   }
 
   .about-text h2 {
@@ -273,9 +272,14 @@
   .menu-card .card-img {
     aspect-ratio: 4/3;
     background: var(--cream);
-    display: flex; align-items: center; justify-content: center;
     margin-bottom: 1.5rem;
-    font-size: 2.5rem; opacity: 0.3;
+    overflow: hidden;
+  }
+
+  .menu-card .card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .menu-card h3 {
@@ -591,7 +595,7 @@
 
 <!-- ABOUT -->
 <section class="about reveal" id="about">
-  <div class="about-visual" style="background:url('assets/img/brand-card.jpg') center/cover; font-size:0; opacity:1;"></div>
+  <div class="about-visual"><img src="assets/img/brand-card.jpg" alt="BySsal" style="width:100%; height:100%; object-fit:cover;"></div>
   <div class="about-text">
     <h2>About Byssal</h2>
     <p>
@@ -618,7 +622,7 @@
   </div>
   <div class="menu-grid">
     <a href="products/rice-oranda.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/rice-oranda.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/rice-oranda.jpg" alt="쌀오란다"></div>
       <h3>쌀오란다</h3>
       <div class="card-en">Rice Oranda</div>
       <p>국내산 쌀·찹쌀·보리로 만든 쌀알알이와 100% 쌀조청으로 만드는 수제 오란다. 감태, 견과, 커피땅콩, 검은깨, 인절미 5가지 맛.</p>
@@ -626,7 +630,7 @@
       <span class="price">개당 ₩1,900</span>
     </a>
     <a href="products/rice-castella.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/castella-1.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/castella-1.jpg" alt="쌀찜카스테라"></div>
       <h3>쌀찜카스테라</h3>
       <div class="card-en">Steamed Rice Castella</div>
       <p>NO버터, NO밀가루, NO방부제. 국내산 쌀가루, 계란, 흰강낭콩앙금으로 촉촉하고 부드럽게. 단호박 · 쑥 · 초코 · 말차.</p>
@@ -634,7 +638,7 @@
       <span class="price">10개입 ₩25,000</span>
     </a>
     <a href="products/rice-cookie.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/oneday-class.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/oneday-class.jpg" alt="미니쌀쿠키"></div>
       <h3>미니쌀쿠키</h3>
       <div class="card-en">Mini Rice Cookie</div>
       <p>국내산 쌀가루와 코코넛가루로 만든 오독오독 식감이 일품. 플레인 & 초코. 속이 편한 쿠키.</p>
@@ -642,7 +646,7 @@
       <span class="price">한통 ₩7,000</span>
     </a>
     <a href="products/honey-bread.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/honey-bread-1.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/honey-bread-1.jpg" alt="찰꿀빵"></div>
       <h3>찰꿀빵</h3>
       <div class="card-en">Sticky Honey Bread</div>
       <p>국내산 찹쌀가루와 벌꿀로 만든 겉은 바삭, 속은 쫀득쫀득한 구움 빵떡. 모카시나몬 · 쑥 · 홍국 · 초코.</p>
@@ -650,7 +654,7 @@
       <span class="price">10개 ₩30,000</span>
     </a>
     <a href="products/rice-crumble.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/crumble-bars.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/crumble-bars.jpg" alt="찹쌀크럼블"></div>
       <h3>찹쌀크럼블</h3>
       <div class="card-en">Glutinous Rice Crumble</div>
       <p>직접 만든 크럼블과 찹쌀 베이스, 바삭하고 쫄깃한 식감. 애플시나몬 · 단호박 · 쑥 · 초코 · 흑미무화과. 9조각 개별포장.</p>
@@ -658,7 +662,7 @@
       <span class="price">한판 ₩35,000</span>
     </a>
     <a href="products/walnut-jeonggwa.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/blog-4.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/blog-4.jpg" alt="호두정과"></div>
       <h3>호두정과</h3>
       <div class="card-en">Walnut Jeonggwa</div>
       <p>최상급 프리미엄 호두 '프리마베라' 사용. 비정제 원당으로 기름에 튀기지 않고 오븐에 두 번 구워 제조.</p>
@@ -666,14 +670,14 @@
       <span class="price">120g ₩12,000</span>
     </a>
     <a href="products/dates.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/gift-wrapping.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/gift-wrapping.jpg" alt="데이츠"></div>
       <h3>데이츠</h3>
       <div class="card-en">Medjool Dates</div>
       <p>최고급 메드쥴 품종 대추야자. 곶감 같은 쫀득한 식감에 오븐에 구운 견과류를 가득 넣은 건강한 고급 디저트.</p>
       <span class="tag">Premium</span>
     </a>
     <a href="products/rice-cake.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/rice-muffins.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/rice-muffins.jpg" alt="앙금떡케이크"></div>
       <h3>앙금 떡 케이크</h3>
       <div class="card-en">Rice Cake with Bean Paste Flowers</div>
       <p>100% 예약주문제. 백설기 · 꿀설기 · 단호박설기 · 쌀찜제누아즈 시트 선택. 레터링, 숫자초 추가 가능.</p>
@@ -681,7 +685,7 @@
       <span class="price">1호 ₩55,000~</span>
     </a>
     <a href="products/crumble-cake.html" class="menu-card" style="text-decoration:none; color:inherit;">
-      <div class="card-img" style="background:url('assets/img/crumble-flavors.jpg') center/cover; font-size:0;"></div>
+      <div class="card-img"><img src="assets/img/crumble-flavors.jpg" alt="크럼블케이크"></div>
       <h3>크럼블 케이크</h3>
       <div class="card-en">Crumble Cake</div>
       <p>원형 · 사각 · 하트 선택 가능. 앙금꽃 데코레이션 추가 가능. 실온보관 가능하여 답례품으로도 인기.</p>
