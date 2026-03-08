@@ -350,8 +350,8 @@
           <div class="dash-card"><div class="dash-label">평균 단가</div><div class="dash-value" id="d-avg-order">₩0</div></div>
           <div class="dash-card"><div class="dash-label">오늘</div><div class="dash-value" id="d-today-orders">0</div></div>
         </div>
-        <div class="dash-section"><h3>📅 일별 주문</h3><canvas id="daily-order-canvas" height="180"></canvas></div>
-        <div class="dash-section"><h3>💰 일별 매출</h3><canvas id="daily-revenue-canvas" height="180"></canvas></div>
+        <div class="dash-section"><h3>📅 월별 주문</h3><canvas id="monthly-order-canvas" height="200"></canvas></div>
+        <div class="dash-section"><h3>💰 월별 매출</h3><canvas id="monthly-revenue-canvas" height="200"></canvas></div>
       </div>
     </div>
 
@@ -588,23 +588,27 @@ function renderDashboard() {
     ? typeSorted.map(([n,c]) => `<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill" style="width:${c/maxType*100}%;background:#a8917a;"></div></div><div class="bar-val">${c}건</div></div>`).join('')
     : '<div class="empty-msg">데이터 없음</div>';
 
-  // Charts — dynamic date range
-  const dayMap = {}, revMap = {}, days = [];
-  const numDays = currentPeriod === 'week' ? 7 : currentPeriod === 'month' ? 30 : 90;
-  for (let i = numDays-1; i >= 0; i--) { const d = new Date(Date.now()-i*86400000); const k = d.toISOString().slice(0,10); days.push(k); dayMap[k]=0; revMap[k]=0; }
-  filtered.forEach(o => { if (o.timestamp) { const k = o.timestamp.slice(0,10); if (dayMap[k]!==undefined) { dayMap[k]++; revMap[k]+=(o.subtotal||0); } } });
+  // Monthly charts
+  const monthMap = {}, monthRevMap = {}, months = [];
+  // Generate last 12 months
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(); d.setMonth(d.getMonth() - i);
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    months.push(k); monthMap[k] = 0; monthRevMap[k] = 0;
+  }
+  filtered.forEach(o => { if (o.timestamp) { const k = o.timestamp.slice(0,7); if (monthMap[k]!==undefined) { monthMap[k]++; monthRevMap[k]+=(o.subtotal||0); } } });
 
-  const labels = days.map(d => d.slice(5));
+  const labels = months.map(m => { const [y,mo] = m.split('-'); return `${mo}월`; });
   const baseOpts = { responsive:true, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:'rgba(138,111,85,0.1)'}} } };
 
   if (window._oc) window._oc.destroy(); if (window._rc) window._rc.destroy(); if (window._pc) window._pc.destroy();
 
-  const oc = document.getElementById('daily-order-canvas');
-  const rc = document.getElementById('daily-revenue-canvas');
+  const oc = document.getElementById('monthly-order-canvas');
+  const rc = document.getElementById('monthly-revenue-canvas');
   const pc = document.getElementById('product-pie-canvas');
 
-  if (oc) window._oc = new Chart(oc, { type:'bar', data:{ labels, datasets:[{data:days.map(d=>dayMap[d]), backgroundColor:'rgba(138,111,85,0.6)', borderColor:'#8a6f55', borderWidth:1, borderRadius:4}] }, options:{...baseOpts, scales:{...baseOpts.scales, y:{...baseOpts.scales.y, ticks:{stepSize:1}}}} });
-  if (rc) window._rc = new Chart(rc, { type:'line', data:{ labels, datasets:[{data:days.map(d=>revMap[d]), borderColor:'#8a6f55', backgroundColor:'rgba(138,111,85,0.1)', fill:true, tension:0.3, pointBackgroundColor:'#8a6f55', pointRadius:4}] }, options:{...baseOpts, scales:{...baseOpts.scales, y:{...baseOpts.scales.y, ticks:{callback:v=>'₩'+v.toLocaleString()}}}} });
+  if (oc) window._oc = new Chart(oc, { type:'bar', data:{ labels, datasets:[{data:months.map(m=>monthMap[m]), backgroundColor:'rgba(138,111,85,0.6)', borderColor:'#8a6f55', borderWidth:1, borderRadius:4}] }, options:{...baseOpts, scales:{...baseOpts.scales, y:{...baseOpts.scales.y, ticks:{stepSize:1}}}} });
+  if (rc) window._rc = new Chart(rc, { type:'line', data:{ labels, datasets:[{data:months.map(m=>monthRevMap[m]), borderColor:'#8a6f55', backgroundColor:'rgba(138,111,85,0.1)', fill:true, tension:0.3, pointBackgroundColor:'#8a6f55', pointRadius:4}] }, options:{...baseOpts, scales:{...baseOpts.scales, y:{...baseOpts.scales.y, ticks:{callback:v=>'₩'+v.toLocaleString()}}}} });
 
   const prodRevMap = {};
   filtered.forEach(o => (o.items||[]).forEach(item => { const n=item.name||'기타'; prodRevMap[n]=(prodRevMap[n]||0)+(item.qty*item.unit); }));
