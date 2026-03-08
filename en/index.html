@@ -167,6 +167,25 @@
   .footer-links a:hover { color: var(--accent); }
   .copyright { font-size: 0.6rem; color: rgba(44,36,32,0.25); letter-spacing: 0.1em; }
 
+  .floating-order-btn {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    z-index: 99;
+    padding: 0.9rem 1.8rem;
+    background: var(--accent);
+    color: var(--white);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(138,111,85,0.3);
+    transition: all 0.3s;
+  }
+  .floating-order-btn:hover {
+    background: #a8917a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(138,111,85,0.4);
+  }
+
   @keyframes fadeUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -464,6 +483,9 @@
 </section>
 
 <!-- FOOTER -->
+<!-- FLOATING ORDER BUTTON -->
+<a href="order.html" class="floating-order-btn">📋 Order</a>
+
 <footer>
   <div class="footer-logo">BYSSAL</div>
   <div class="footer-desc">

@@ -526,6 +526,27 @@
   }
 
   /* ── ANIMATIONS ── */
+  /* ── FLOATING ORDER BUTTON ── */
+  .floating-order-btn {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    z-index: 99;
+    padding: 0.9rem 1.8rem;
+    background: var(--accent);
+    color: var(--white);
+    font-family: var(--serif-kr);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(138,111,85,0.3);
+    transition: all 0.3s;
+  }
+  .floating-order-btn:hover {
+    background: #a8917a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(138,111,85,0.4);
+  }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(25px); }
     to { opacity: 1; transform: translateY(0); }
@@ -827,6 +848,9 @@
 </section>
 
 <!-- FOOTER -->
+<!-- FLOATING ORDER BUTTON -->
+<a href="order.html" class="floating-order-btn">📋 주문서 작성</a>
+
 <footer>
   <div class="footer-logo">BYSSAL</div>
   <div class="footer-desc">
