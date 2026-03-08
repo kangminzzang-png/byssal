@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>호두정과 — BySsal</title>
 <link rel="stylesheet" href="template.css">
+<style>
+  .product-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0 3rem; max-width: 1100px; margin: -2rem auto 3rem; }
+  .product-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; border: 1px solid rgba(46,42,39,0.08); transition: transform 0.4s; }
+  .product-gallery img:hover { transform: scale(1.02); }
+  .highlight-box { background: rgba(138,111,85,0.06); border-left: 3px solid #8a6f55; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 0.85rem; line-height: 2; color: #2e2a27; }
+  .highlight-box strong { color: #8a6f55; }
+  @media (max-width: 768px) { .product-gallery { padding: 0 1.5rem; grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
 <nav>
@@ -13,55 +21,57 @@
 </nav>
 
 <div class="product-hero">
-  <div class="product-img"><img src="../assets/img/gift-wrapping.jpg" alt="호두정과"></div>
+  <div class="product-img"><img src="../assets/img/walnut-display.jpg" alt="호두정과 선물 패키지"></div>
   <div class="product-info">
     <h1>호두정과</h1>
-    <div class="product-en">Walnut Jeonggwa</div>
-    <div class="product-price">1통(120g) ₩12,000</div>
+    <div class="product-en">Candied Walnut (Jeonggwa)</div>
+    <div class="product-price">120g ₩12,000</div>
     <p class="product-desc">
-      최상급 프리미엄 호두 '프리마베라'를 사용하고 비정제 원당으로
-      기름에 튀기지 않고 오븐에 두 번 구워 만드는 건강한 정과.
+      최상급 호두를 오븐에 두 번 구워 더욱 고소하고 바삭합니다.<br><br>
+      조청에 버무린 윤기 나는 호두 정과. 한 알 집어먹으면 고소한 향이 입안 가득,
+      달콤한 조청이 은은하게 감쌉니다. 건강한 간식의 정석.
     </p>
     <div class="product-tags">
-      <span class="product-tag">Premium</span>
-      <span class="product-tag">Non-Fried</span>
-      <span class="product-tag">Oven Baked</span>
+      <span class="product-tag">Premium Walnut</span>
+      <span class="product-tag">Double Roasted</span>
+      <span class="product-tag">Traditional</span>
     </div>
   </div>
 </div>
 
 <div class="product-details">
   <div class="detail-section">
-    <h3>선물세트</h3>
+    <div class="highlight-box">
+      💡 <strong>두 번 구운 호두</strong><br>
+      한 번 구운 호두는 고소합니다. <strong>두 번 구운 호두</strong>는 바삭합니다.<br>
+      바이쌀 호두정과는 최상급 호두를 <strong>오븐에서 두 번 로스팅</strong>한 후 조청에 버무립니다.<br>
+      그래서 씹는 순간 "아삭" 소리가 나고, 식감이 살아 있습니다.
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h3>선물 패키지</h3>
+    <p style="font-size:0.85rem; color:rgba(46,42,39,0.7); line-height:2;">
+      투명 통에 담아 한눈에 보이는 고급 패키지. 리본 박스와 함께 드리면 명절·감사 선물로 완벽합니다.
+    </p>
     <table class="price-table">
       <tr><th>구성</th><th>가격</th></tr>
-      <tr><td>호두정과 세트 (2통, 보자기 & 노리개 포함)</td><td>₩30,000</td></tr>
-      <tr><td>호두정과 1통 & 쌀오란다 8개 세트 (보자기 포함)</td><td>₩33,200</td></tr>
+      <tr><td>120g (투명통)</td><td>₩12,000</td></tr>
     </table>
   </div>
 
   <div class="detail-section">
-    <h3>답례품</h3>
-    <table class="price-table">
-      <tr><th>구성</th><th>가격</th></tr>
-      <tr><td>20g부터 가능</td><td>₩2,000~</td></tr>
-    </table>
-  </div>
-
-  <div class="detail-section">
-    <h3>특징</h3>
-    <ul>
-      <li>최상급 프리미엄 호두 '프리마베라' 사용</li>
-      <li>비정제 원당 사용</li>
-      <li>기름에 튀기지 않고 오븐에 두 번 구움</li>
-    </ul>
-  </div>
-
-  <div class="detail-section">
-    <h3>보관 방법</h3>
-    <ul>
-      <li>냉장 · 냉동 보관: 1달</li>
-    </ul>
+    <h3>원재료 & 보관</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+      <div>
+        <h4 style="font-size:0.75rem; color:#8a6f55; margin-bottom:0.5rem;">원재료</h4>
+        <ul><li>최상급 호두</li><li>쌀조청</li></ul>
+      </div>
+      <div>
+        <h4 style="font-size:0.75rem; color:#8a6f55; margin-bottom:0.5rem;">보관 방법</h4>
+        <ul><li>냉장·냉동 보관: 1달</li></ul>
+      </div>
+    </div>
   </div>
 </div>
 

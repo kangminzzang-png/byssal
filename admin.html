@@ -5,164 +5,149 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BySsal Admin</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500&display=swap');
-  :root { --bg: #f7f3ef; --fg: #2e2a27; --accent: #8a6f55; --white: #fff; --dim: rgba(46,42,39,0.55); --subtle: rgba(46,42,39,0.12); }
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+  :root {
+    --bg: #f7f3ef; --fg: #2e2a27; --accent: #8a6f55; --accent-light: #a8917a;
+    --white: #fff; --dim: rgba(46,42,39,0.55); --subtle: rgba(46,42,39,0.08);
+    --sidebar-w: 240px; --sidebar-bg: #2e2a27; --sidebar-fg: #d8cfc4;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--fg); font-family: 'Noto Serif KR', serif; line-height: 1.8; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Noto Sans KR', sans-serif; line-height: 1.7; }
 
-  /* LOGIN */
+  /* ── LOGIN ── */
   .login-screen {
-    height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
+    height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--sidebar-bg);
   }
-  .login-screen h1 { font-size: 1.2rem; color: var(--accent); margin-bottom: 1.5rem; letter-spacing: 0.1em; }
+  .login-logo { margin-bottom: 2rem; text-align: center; }
+  .login-logo .logo-mark { font-family: 'Noto Serif KR', serif; font-size: 1.8rem; color: var(--white); letter-spacing: 0.15em; }
+  .login-logo .logo-sub { font-size: 0.6rem; color: var(--sidebar-fg); letter-spacing: 0.3em; margin-top: 0.2rem; }
   .login-screen input {
-    padding: 0.8rem 1.2rem; width: 280px; border: 1px solid var(--subtle);
-    font-family: inherit; font-size: 0.85rem; text-align: center; margin-bottom: 1rem;
+    padding: 0.8rem 1.2rem; width: 280px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05);
+    font-family: inherit; font-size: 0.85rem; text-align: center; color: var(--white); margin-bottom: 1rem;
   }
+  .login-screen input::placeholder { color: rgba(255,255,255,0.35); }
   .login-screen input:focus { outline: none; border-color: var(--accent); }
   .login-screen button {
-    padding: 0.8rem 2.5rem; background: var(--accent); color: var(--white);
-    border: none; font-family: inherit; font-size: 0.8rem; letter-spacing: 0.15em; cursor: pointer;
+    padding: 0.8rem 2.5rem; background: var(--accent); color: var(--white); border: none;
+    font-family: inherit; font-size: 0.8rem; letter-spacing: 0.15em; cursor: pointer;
   }
-  .login-screen button:hover { background: #a8917a; }
-  .login-error { color: #c00; font-size: 0.75rem; margin-top: 0.5rem; display: none; }
+  .login-screen button:hover { background: var(--accent-light); }
+  .login-error { color: #e57373; font-size: 0.75rem; margin-top: 0.5rem; display: none; }
 
-  /* ADMIN PANEL */
-  .admin-panel { display: none; max-width: 600px; margin: 0 auto; padding: 3rem 2rem; }
-  .admin-panel.visible { display: block; }
+  /* ── LAYOUT ── */
+  .app { display: none; }
+  .app.visible { display: flex; min-height: 100vh; }
 
-  .admin-header { text-align: center; margin-bottom: 2.5rem; }
-  .admin-header h1 { font-size: 1.3rem; color: var(--accent); letter-spacing: 0.1em; }
-  .admin-header p { font-size: 0.75rem; color: var(--dim); margin-top: 0.3rem; }
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--sidebar-bg); color: var(--sidebar-fg);
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    display: flex; flex-direction: column; transition: transform 0.3s;
+  }
+  .sidebar-header { padding: 1.8rem 1.5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-header .s-logo { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; color: var(--white); letter-spacing: 0.12em; }
+  .sidebar-header .s-sub { font-size: 0.55rem; letter-spacing: 0.25em; color: var(--accent-light); margin-top: 0.15rem; }
 
-  .section { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--subtle); }
-  .section h2 { font-size: 0.65rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+  .nav-group-label { font-size: 0.55rem; letter-spacing: 0.3em; color: rgba(255,255,255,0.3); padding: 1rem 1.5rem 0.4rem; text-transform: uppercase; }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.7rem 1.5rem; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); }
+  .nav-item.active { background: rgba(138,111,85,0.2); border-left-color: var(--accent); color: var(--white); }
+  .nav-item .nav-icon { width: 18px; text-align: center; }
+
+  .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.6rem; color: rgba(255,255,255,0.25); }
+
+  /* MAIN CONTENT */
+  .main { flex: 1; margin-left: var(--sidebar-w); padding: 2rem 2.5rem 4rem; max-width: 900px; }
+
+  .page-header { margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--subtle); }
+  .page-header h1 { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; font-weight: 500; }
+  .page-header p { font-size: 0.7rem; color: var(--dim); margin-top: 0.2rem; }
+
+  /* TAB PANELS */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 2rem; padding: 1.5rem; background: var(--white); border: 1px solid var(--subtle); }
+  .section h2 { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; font-weight: 500; }
 
   /* DATE CONTROLS */
-  .date-add { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-  .date-add input { flex: 1; padding: 0.6rem; border: 1px solid var(--subtle); font-family: inherit; font-size: 0.85rem; }
+  .date-add { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; align-items: center; }
+  .date-add input { flex: 1; padding: 0.5rem; border: 1px solid var(--subtle); font-family: inherit; font-size: 0.8rem; }
   .date-add input:focus { outline: none; border-color: var(--accent); }
-  .date-add button {
-    padding: 0.6rem 1.2rem; background: var(--accent); color: var(--white);
-    border: none; font-family: inherit; font-size: 0.8rem; cursor: pointer;
-  }
+  .date-add span { font-size: 0.75rem; color: var(--dim); }
+  .btn { padding: 0.5rem 1rem; background: var(--accent); color: var(--white); border: none; font-family: inherit; font-size: 0.75rem; cursor: pointer; letter-spacing: 0.05em; }
+  .btn:hover { background: var(--accent-light); }
+  .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.7rem; }
+  .btn-danger { background: #c62828; }
+  .btn-danger:hover { background: #e53935; }
 
   .blocked-list { list-style: none; }
-  .blocked-list li {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--subtle);
-    font-size: 0.85rem;
-  }
-  .blocked-list li .date-text { font-weight: 400; }
-  .blocked-list li .remove-btn {
-    background: none; border: none; color: #c00; cursor: pointer;
-    font-size: 0.8rem; padding: 0.2rem 0.5rem;
-  }
-  .blocked-list li .remove-btn:hover { background: rgba(200,0,0,0.08); }
-  .empty-msg { font-size: 0.8rem; color: var(--dim); font-style: italic; }
+  .blocked-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--subtle); font-size: 0.8rem; }
+  .empty-msg { font-size: 0.75rem; color: var(--dim); font-style: italic; }
 
   /* NOTICE */
-  .notice-input {
-    width: 100%; padding: 0.7rem; border: 1px solid var(--subtle);
-    font-family: inherit; font-size: 0.85rem; resize: vertical; min-height: 60px;
-  }
+  .notice-input { width: 100%; padding: 0.6rem; border: 1px solid var(--subtle); font-family: inherit; font-size: 0.8rem; resize: vertical; min-height: 50px; }
   .notice-input:focus { outline: none; border-color: var(--accent); }
 
-  /* SAVE */
-  .save-bar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    padding: 1rem 2rem; background: var(--accent); text-align: center;
-    display: none;
-  }
-  .save-bar.visible { display: block; }
-  .save-bar button {
-    padding: 0.7rem 3rem; background: var(--white); color: var(--accent);
-    border: none; font-family: inherit; font-size: 0.85rem; letter-spacing: 0.15em;
-    cursor: pointer; font-weight: 500;
-  }
-  .save-bar button:hover { background: #f0ece8; }
-  .save-bar .save-status {
-    color: var(--white); font-size: 0.75rem; margin-top: 0.3rem;
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
-    padding: 0.7rem 2rem; background: #2e7d32; color: var(--white);
-    font-size: 0.8rem; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none;
-  }
-  .toast.show { opacity: 1; }
-
-  /* PRICE MANAGEMENT */
-  .price-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.5rem 0; border-bottom: 1px solid var(--subtle);
-  }
+  /* PRICE */
+  .price-group { margin-bottom: 1.5rem; }
+  .price-group h4 { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 0.6rem; font-weight: 500; }
+  .price-row { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--subtle); }
   .price-row span { font-size: 0.8rem; }
-  .price-input-wrap {
-    display: flex; align-items: center; gap: 0.2rem;
-    font-size: 0.85rem; color: var(--accent); font-weight: 500;
-  }
-  .price-input {
-    width: 90px; padding: 0.4rem; border: 1px solid var(--subtle);
-    font-family: inherit; font-size: 0.85rem; text-align: right; color: var(--fg);
-  }
+  .price-input-wrap { display: flex; align-items: center; gap: 0.2rem; font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+  .price-input { width: 90px; padding: 0.35rem; border: 1px solid var(--subtle); font-family: inherit; font-size: 0.8rem; text-align: right; }
   .price-input:focus { outline: none; border-color: var(--accent); }
 
   /* DASHBOARD */
-  .dash-period { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-  .period-btn {
-    padding: 0.4rem 1rem; border: 1px solid var(--subtle); background: var(--white);
-    font-family: inherit; font-size: 0.75rem; cursor: pointer; transition: all 0.3s;
-  }
+  .dash-period { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; }
+  .period-btn { padding: 0.35rem 0.8rem; border: 1px solid var(--subtle); background: var(--white); font-family: inherit; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
   .period-btn.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
 
-  .dash-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem; }
-  .dash-card {
-    padding: 1.2rem; background: var(--white); border: 1px solid var(--subtle); text-align: center;
-  }
-  .dash-label { font-size: 0.65rem; color: var(--dim); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
-  .dash-value { font-size: 1.4rem; font-weight: 500; color: var(--accent); }
+  .dash-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.5rem; }
+  .dash-card { padding: 1rem; background: var(--bg); text-align: center; }
+  .dash-label { font-size: 0.55rem; color: var(--dim); letter-spacing: 0.1em; margin-bottom: 0.2rem; }
+  .dash-value { font-size: 1.3rem; font-weight: 500; color: var(--accent); }
 
-  .dash-section { margin-bottom: 1.5rem; }
-  .dash-section h3 { font-size: 0.8rem; margin-bottom: 0.8rem; color: var(--fg); }
+  .dash-section { margin-bottom: 1.2rem; }
+  .dash-section h3 { font-size: 0.75rem; margin-bottom: 0.6rem; }
 
-  /* BAR CHART */
-  .bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
-  .bar-label { width: 80px; font-size: 0.7rem; color: var(--dim); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bar-track { flex: 1; height: 20px; background: var(--subtle); position: relative; }
+  .bar-row { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; }
+  .bar-label { width: 80px; font-size: 0.65rem; color: var(--dim); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 18px; background: var(--subtle); }
   .bar-fill { height: 100%; background: var(--accent); transition: width 0.5s; }
-  .bar-val { width: 50px; font-size: 0.7rem; color: var(--fg); }
+  .bar-val { width: 45px; font-size: 0.65rem; }
 
-  /* DAILY CHART */
-  .daily-bars { display: flex; align-items: flex-end; gap: 2px; height: 100px; padding-top: 0.5rem; }
-  .daily-bar {
-    flex: 1; background: var(--accent); min-width: 8px; position: relative; cursor: pointer; transition: opacity 0.2s;
-  }
-  .daily-bar:hover { opacity: 0.7; }
-  .daily-bar .tip {
-    display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-    background: var(--fg); color: var(--white); padding: 0.2rem 0.5rem; font-size: 0.6rem;
-    white-space: nowrap; z-index: 10;
-  }
-  .daily-bar:hover .tip { display: block; }
-  .daily-labels { display: flex; gap: 2px; margin-top: 0.3rem; }
-  .daily-labels span { flex: 1; font-size: 0.5rem; color: var(--dim); text-align: center; min-width: 8px; }
-
-  /* RECENT ORDERS */
-  .order-row {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.6rem 0; border-bottom: 1px solid var(--subtle); font-size: 0.75rem;
-  }
-  .order-row .o-num { color: var(--accent); font-weight: 500; width: 160px; }
+  .order-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0; border-bottom: 1px solid var(--subtle); font-size: 0.7rem; }
+  .order-row .o-num { color: var(--accent); font-weight: 500; width: 150px; }
   .order-row .o-name { flex: 1; }
   .order-row .o-amount { font-weight: 500; }
-  .order-row .o-date { color: var(--dim); width: 80px; text-align: right; }
+  .order-row .o-date { color: var(--dim); width: 75px; text-align: right; }
 
-  @media (max-width: 500px) {
-    .admin-panel { padding: 2rem 1.2rem; }
-    .date-add { flex-direction: column; }
+  /* SAVE BAR */
+  .save-bar { position: fixed; bottom: 0; left: var(--sidebar-w); right: 0; padding: 0.8rem 2rem; background: var(--accent); display: none; z-index: 50; }
+  .save-bar.visible { display: flex; align-items: center; justify-content: space-between; }
+  .save-bar .save-status { color: rgba(255,255,255,0.8); font-size: 0.7rem; }
+
+  /* TOAST */
+  .toast { position: fixed; top: 1.5rem; right: 2rem; padding: 0.6rem 1.5rem; background: #2e7d32; color: var(--white); font-size: 0.75rem; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* MOBILE SIDEBAR */
+  .sidebar-toggle { display: none; position: fixed; top: 1rem; left: 1rem; z-index: 150; background: var(--sidebar-bg); color: var(--white); border: none; width: 36px; height: 36px; font-size: 1.1rem; cursor: pointer; }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-toggle { display: block; }
+    .main { margin-left: 0; padding: 3.5rem 1.2rem 4rem; }
+    .dash-cards { grid-template-columns: 1fr 1fr; }
+    .save-bar { left: 0; }
+    .date-add { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -170,156 +155,160 @@
 
 <!-- LOGIN -->
 <div class="login-screen" id="login-screen">
-  <h1>🌾 BySsal Admin</h1>
-  <input type="password" id="admin-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')login()">
+  <div class="login-logo">
+    <div class="logo-mark">🌾 by ssal</div>
+    <div class="logo-sub">RICE DESSERT & CAKE · ADMIN</div>
+  </div>
+  <input type="password" id="admin-pw" placeholder="비밀번호" onkeydown="if(event.key==='Enter')login()">
   <button onclick="login()">로그인</button>
   <div class="login-error" id="login-error">비밀번호가 틀렸습니다</div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div class="admin-panel" id="admin-panel">
-  <div class="admin-header">
-    <h1>🌾 BySsal Admin</h1>
-    <p>주문 관리 패널</p>
-  </div>
+<!-- APP SHELL -->
+<div class="app" id="app">
+  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
 
-  <!-- BLOCKED DATES -->
-  <div class="section">
-    <h2>🔒 주문 차단 날짜</h2>
-    <p style="font-size:0.75rem; color:var(--dim); margin-bottom:1rem;">
-      주문이 많은 날 차단하면, 고객이 해당 날짜로 주문할 수 없습니다.
-    </p>
-    <div class="date-add">
-      <input type="date" id="new-date-from">
-      <span style="font-size:0.8rem; color:var(--dim);">~</span>
-      <input type="date" id="new-date-to">
-      <button onclick="addDateRange()">+ 추가</button>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="s-logo">🌾 by ssal</div>
+      <div class="s-sub">RICE DESSERT & CAKE</div>
     </div>
-    <p style="font-size:0.65rem; color:var(--dim); margin-bottom:0.8rem;">한 날짜만 선택하면 하루만, 두 날짜 모두 선택하면 기간 전체가 차단됩니다.</p>
-    <ul class="blocked-list" id="blocked-list"></ul>
-    <div class="empty-msg" id="empty-msg">차단된 날짜가 없습니다</div>
-  </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">주문 관리</div>
+      <div class="nav-item active" onclick="switchTab('orders',this)"><span class="nav-icon">📋</span>주문 현황</div>
+      <div class="nav-item" onclick="switchTab('blocked',this)"><span class="nav-icon">🔒</span>날짜 차단</div>
+      <div class="nav-item" onclick="switchTab('notice',this)"><span class="nav-icon">📢</span>공지사항</div>
 
-  <!-- NOTICE -->
-  <div class="section">
-    <h2>📢 주문 페이지 공지</h2>
-    <p style="font-size:0.75rem; color:var(--dim); margin-bottom:1rem;">
-      주문 페이지 상단에 표시할 공지사항 (비우면 표시 안 됨)
-    </p>
-    <textarea class="notice-input" id="notice-input" placeholder="예: 설 연휴(1/27~1/30) 주문이 많아 배송이 지연될 수 있습니다."></textarea>
-  </div>
+      <div class="nav-group-label">상품 관리</div>
+      <div class="nav-item" onclick="switchTab('prices',this)"><span class="nav-icon">💲</span>가격 관리</div>
 
-  <!-- CURRENT STATUS -->
-  <div class="section">
-    <h2>📊 현재 상태</h2>
-    <div id="status-display" style="font-size:0.8rem; color:var(--dim);"></div>
-  </div>
-
-  <!-- PRICE MANAGEMENT -->
-  <div class="section">
-    <h2>💲 상품 가격 관리</h2>
-    <p style="font-size:0.75rem; color:var(--dim); margin-bottom:1rem;">
-      가격을 수정하면 주문 폼과 상세 페이지에 즉시 반영됩니다.
-    </p>
-
-    <div class="price-group">
-      <h4 style="font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:0.8rem;">🍘 쌀 디저트</h4>
-      <div class="price-row"><span>쌀오란다 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="쌀오란다" min="0" step="100"></div></div>
-      <div class="price-row"><span>쌀찜카스테라 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="쌀찜카스테라" min="0" step="100"></div></div>
-      <div class="price-row"><span>미니쌀쿠키 (1통)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="미니쌀쿠키" min="0" step="100"></div></div>
-      <div class="price-row"><span>찰꿀빵 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="찰꿀빵" min="0" step="100"></div></div>
-      <div class="price-row"><span>찹쌀크럼블 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="찹쌀크럼블" min="0" step="100"></div></div>
-      <div class="price-row"><span>호두정과 (120g)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="호두정과" min="0" step="100"></div></div>
-      <div class="price-row"><span>데이츠 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="데이츠" min="0" step="100"></div></div>
+      <div class="nav-group-label">분석</div>
+      <div class="nav-item" onclick="switchTab('dashboard',this)"><span class="nav-icon">📈</span>매출 대시보드</div>
+      <div class="nav-item" onclick="switchTab('products-analytics',this)"><span class="nav-icon">🏆</span>상품 분석</div>
+    </nav>
+    <div class="sidebar-footer">
+      BySsal Admin v1.0<br>© 2026 by ssal
     </div>
+  </aside>
 
-    <div class="price-group" style="margin-top:1.5rem;">
-      <h4 style="font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:0.8rem;">🎂 앙금떡케이크</h4>
-      <div class="price-row"><span>1호 (15cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_1호" min="0" step="1000"></div></div>
-      <div class="price-row"><span>2호 (18cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_2호" min="0" step="1000"></div></div>
-      <div class="price-row"><span>3호 (21cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_3호" min="0" step="1000"></div></div>
-      <div class="price-row"><span>4호 (24cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_4호" min="0" step="1000"></div></div>
-      <div class="price-row"><span>이단 1+3호</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_이단1+3" min="0" step="1000"></div></div>
-      <div class="price-row"><span>이단 2+4호</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_이단2+4" min="0" step="1000"></div></div>
-    </div>
+  <!-- MAIN -->
+  <div class="main">
 
-    <div class="price-group" style="margin-top:1.5rem;">
-      <h4 style="font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:0.8rem;">🍰 크럼블케이크</h4>
-      <div class="price-row"><span>1단 (2호)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="크럼블케이크_1단" min="0" step="1000"></div></div>
-    </div>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div class="section">
-    <h2>📈 매출 대시보드</h2>
-    <div class="dash-period">
-      <button class="period-btn active" onclick="setPeriod('week',this)">이번 주</button>
-      <button class="period-btn" onclick="setPeriod('month',this)">이번 달</button>
-      <button class="period-btn" onclick="setPeriod('all',this)">전체</button>
-    </div>
-
-    <!-- SUMMARY CARDS -->
-    <div class="dash-cards" id="dash-cards">
-      <div class="dash-card">
-        <div class="dash-label">총 주문</div>
-        <div class="dash-value" id="d-total-orders">0</div>
+    <!-- TAB: ORDERS -->
+    <div class="tab-panel active" id="tab-orders">
+      <div class="page-header"><h1>📋 주문 현황</h1><p>최근 주문 내역과 오늘 현황을 확인합니다</p></div>
+      <div class="dash-cards" id="summary-cards">
+        <div class="dash-card"><div class="dash-label">오늘 주문</div><div class="dash-value" id="s-today">0</div></div>
+        <div class="dash-card"><div class="dash-label">오늘 매출</div><div class="dash-value" id="s-today-rev">₩0</div></div>
+        <div class="dash-card"><div class="dash-label">이번 주</div><div class="dash-value" id="s-week">0</div></div>
+        <div class="dash-card"><div class="dash-label">이번 달</div><div class="dash-value" id="s-month">0</div></div>
       </div>
-      <div class="dash-card">
-        <div class="dash-label">총 매출</div>
-        <div class="dash-value" id="d-total-revenue">₩0</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-label">평균 주문금액</div>
-        <div class="dash-value" id="d-avg-order">₩0</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-label">오늘 주문</div>
-        <div class="dash-value" id="d-today-orders">0</div>
+      <div class="section">
+        <h2>🕐 최근 주문</h2>
+        <div id="recent-orders"></div>
       </div>
     </div>
 
-    <!-- PRODUCT RANKING -->
-    <div class="dash-section">
-      <h3>🏆 상품별 판매량</h3>
-      <div id="product-ranking"></div>
+    <!-- TAB: BLOCKED DATES -->
+    <div class="tab-panel" id="tab-blocked">
+      <div class="page-header"><h1>🔒 날짜 차단</h1><p>주문이 많은 날을 차단하면 고객이 해당 날짜를 선택할 수 없습니다</p></div>
+      <div class="section">
+        <h2>차단 날짜 추가</h2>
+        <div class="date-add">
+          <input type="date" id="new-date-from">
+          <span>~</span>
+          <input type="date" id="new-date-to">
+          <button class="btn" onclick="addDateRange()">+ 추가</button>
+        </div>
+        <p style="font-size:0.65rem; color:var(--dim); margin-bottom:1rem;">한 날짜만 선택하면 하루만, 두 날짜 선택하면 기간 전체 차단</p>
+        <ul class="blocked-list" id="blocked-list"></ul>
+        <div class="empty-msg" id="empty-msg">차단된 날짜가 없습니다</div>
+      </div>
     </div>
 
-    <!-- ORDER TYPE -->
-    <div class="dash-section">
-      <h3>📋 주문 유형별</h3>
-      <div id="order-type-chart"></div>
+    <!-- TAB: NOTICE -->
+    <div class="tab-panel" id="tab-notice">
+      <div class="page-header"><h1>📢 공지사항</h1><p>주문 페이지 상단에 배너로 표시됩니다</p></div>
+      <div class="section">
+        <h2>공지 내용</h2>
+        <textarea class="notice-input" id="notice-input" placeholder="예: 설 연휴(1/27~1/30) 주문이 많아 배송이 지연될 수 있습니다."></textarea>
+        <p style="font-size:0.65rem; color:var(--dim); margin-top:0.5rem;">비우면 공지 배너가 표시되지 않습니다</p>
+      </div>
     </div>
 
-    <!-- DAILY ORDER CHART -->
-    <div class="dash-section">
-      <h3>📅 일별 주문 추이</h3>
-      <canvas id="daily-order-canvas" height="200"></canvas>
+    <!-- TAB: PRICES -->
+    <div class="tab-panel" id="tab-prices">
+      <div class="page-header"><h1>💲 가격 관리</h1><p>가격을 수정하면 주문 폼과 상세 페이지에 즉시 반영됩니다</p></div>
+      <div class="section">
+        <div class="price-group">
+          <h4>🍘 쌀 디저트</h4>
+          <div class="price-row"><span>쌀오란다 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="쌀오란다" min="0" step="100"></div></div>
+          <div class="price-row"><span>쌀찜카스테라 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="쌀찜카스테라" min="0" step="100"></div></div>
+          <div class="price-row"><span>미니쌀쿠키 (1통)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="미니쌀쿠키" min="0" step="100"></div></div>
+          <div class="price-row"><span>찰꿀빵 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="찰꿀빵" min="0" step="100"></div></div>
+          <div class="price-row"><span>찹쌀크럼블 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="찹쌀크럼블" min="0" step="100"></div></div>
+          <div class="price-row"><span>호두정과 (120g)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="호두정과" min="0" step="100"></div></div>
+          <div class="price-row"><span>데이츠 (개당)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="데이츠" min="0" step="100"></div></div>
+        </div>
+        <div class="price-group">
+          <h4>🎂 앙금떡케이크</h4>
+          <div class="price-row"><span>1호 (15cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_1호" min="0" step="1000"></div></div>
+          <div class="price-row"><span>2호 (18cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_2호" min="0" step="1000"></div></div>
+          <div class="price-row"><span>3호 (21cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_3호" min="0" step="1000"></div></div>
+          <div class="price-row"><span>4호 (24cm)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_4호" min="0" step="1000"></div></div>
+          <div class="price-row"><span>이단 1+3호</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_이단1+3" min="0" step="1000"></div></div>
+          <div class="price-row"><span>이단 2+4호</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="앙금떡케이크_이단2+4" min="0" step="1000"></div></div>
+        </div>
+        <div class="price-group">
+          <h4>🍰 크럼블케이크</h4>
+          <div class="price-row"><span>1단 (2호)</span><div class="price-input-wrap">₩<input type="number" class="price-input" data-key="크럼블케이크_1단" min="0" step="1000"></div></div>
+        </div>
+      </div>
     </div>
 
-    <!-- DAILY REVENUE CHART -->
-    <div class="dash-section">
-      <h3>💰 일별 매출 추이</h3>
-      <canvas id="daily-revenue-canvas" height="200"></canvas>
+    <!-- TAB: DASHBOARD -->
+    <div class="tab-panel" id="tab-dashboard">
+      <div class="page-header"><h1>📈 매출 대시보드</h1><p>기간별 매출과 주문 추이를 확인합니다</p></div>
+      <div class="section">
+        <div class="dash-period">
+          <button class="period-btn active" onclick="setPeriod('week',this)">이번 주</button>
+          <button class="period-btn" onclick="setPeriod('month',this)">이번 달</button>
+          <button class="period-btn" onclick="setPeriod('all',this)">전체</button>
+        </div>
+        <div class="dash-cards">
+          <div class="dash-card"><div class="dash-label">총 주문</div><div class="dash-value" id="d-total-orders">0</div></div>
+          <div class="dash-card"><div class="dash-label">총 매출</div><div class="dash-value" id="d-total-revenue">₩0</div></div>
+          <div class="dash-card"><div class="dash-label">평균 단가</div><div class="dash-value" id="d-avg-order">₩0</div></div>
+          <div class="dash-card"><div class="dash-label">오늘</div><div class="dash-value" id="d-today-orders">0</div></div>
+        </div>
+        <div class="dash-section"><h3>📅 일별 주문</h3><canvas id="daily-order-canvas" height="180"></canvas></div>
+        <div class="dash-section"><h3>💰 일별 매출</h3><canvas id="daily-revenue-canvas" height="180"></canvas></div>
+      </div>
     </div>
 
-    <!-- PRODUCT PIE -->
-    <div class="dash-section">
-      <h3>🍰 상품별 매출 비중</h3>
-      <canvas id="product-pie-canvas" height="250"></canvas>
+    <!-- TAB: PRODUCT ANALYTICS -->
+    <div class="tab-panel" id="tab-products-analytics">
+      <div class="page-header"><h1>🏆 상품 분석</h1><p>상품별 판매량과 매출 비중을 분석합니다</p></div>
+      <div class="section">
+        <div class="dash-period">
+          <button class="period-btn active" onclick="setPeriod('week',this)">이번 주</button>
+          <button class="period-btn" onclick="setPeriod('month',this)">이번 달</button>
+          <button class="period-btn" onclick="setPeriod('all',this)">전체</button>
+        </div>
+        <div class="dash-section"><h3>📊 상품별 판매량</h3><div id="product-ranking"></div></div>
+        <div class="dash-section"><h3>📋 주문 유형별</h3><div id="order-type-chart"></div></div>
+        <div class="dash-section"><h3>🍰 상품별 매출 비중</h3><canvas id="product-pie-canvas" height="250"></canvas></div>
+      </div>
     </div>
 
-    <!-- RECENT ORDERS -->
-    <div class="dash-section">
-      <h3>🕐 최근 주문</h3>
-      <div id="recent-orders"></div>
-    </div>
   </div>
 </div>
 
 <!-- SAVE BAR -->
 <div class="save-bar" id="save-bar">
-  <button onclick="saveConfig()">💾 저장하기</button>
-  <div class="save-status" id="save-status"></div>
+  <div class="save-status" id="save-status">변경사항이 있습니다</div>
+  <button class="btn" onclick="saveConfig()" style="background:var(--white); color:var(--accent);">💾 저장하기</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -327,11 +316,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 const API_URL = 'https://jsonblob.com/api/jsonBlob/019ccbd9-9baa-7bd9-b9df-c4be1c19c0b2';
-const ADMIN_PW_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // "admin" sha256
+const ORDERS_URL = 'https://jsonblob.com/api/jsonBlob/019ccbdd-40a9-7894-8784-363d1356e9cf';
+const ADMIN_PW_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
 
-let config = { blocked_dates: [], notice: '' };
+let config = { blocked_dates: [], notice: '', prices: {} };
+let allOrders = [];
+let currentPeriod = 'week';
 let hasChanges = false;
 
+// ── AUTH ──
 async function sha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
@@ -340,12 +333,9 @@ async function sha256(text) {
 async function login() {
   const pw = document.getElementById('admin-pw').value;
   const hash = await sha256(pw);
-  // Accept the set password hash
-  const stored = localStorage.getItem('byssal_admin_hash') || ADMIN_PW_HASH;
-  if (hash === stored || hash === ADMIN_PW_HASH) {
+  if (hash === ADMIN_PW_HASH) {
     document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-panel').classList.add('visible');
-    document.getElementById('save-bar').classList.add('visible');
+    document.getElementById('app').classList.add('visible');
     loadConfig();
     loadOrders();
   } else {
@@ -353,6 +343,19 @@ async function login() {
   }
 }
 
+// ── TAB SWITCHING ──
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  // Re-render charts when switching to them
+  if (id === 'dashboard' || id === 'products-analytics') renderDashboard();
+}
+
+// ── CONFIG ──
 async function loadConfig() {
   try {
     const res = await fetch(API_URL);
@@ -360,10 +363,7 @@ async function loadConfig() {
     renderDates();
     loadPrices();
     document.getElementById('notice-input').value = config.notice || '';
-    updateStatus();
-  } catch(e) {
-    showToast('⚠️ 설정을 불러올 수 없습니다', true);
-  }
+  } catch(e) { showToast('⚠️ 설정을 불러올 수 없습니다', true); }
 }
 
 function loadPrices() {
@@ -377,130 +377,103 @@ function loadPrices() {
 function collectPrices() {
   if (!config.prices) config.prices = {};
   document.querySelectorAll('.price-input').forEach(input => {
-    const key = input.dataset.key;
     const val = parseInt(input.value);
-    if (!isNaN(val)) config.prices[key] = val;
+    if (!isNaN(val)) config.prices[input.dataset.key] = val;
   });
 }
 
-// Listen for price changes
 document.addEventListener('input', e => {
-  if (e.target.classList.contains('price-input')) markChanged();
+  if (e.target.classList.contains('price-input') || e.target.id === 'notice-input') markChanged();
 });
 
 function renderDates() {
   const list = document.getElementById('blocked-list');
   const empty = document.getElementById('empty-msg');
-
-  if (!config.blocked_dates || config.blocked_dates.length === 0) {
-    list.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-
+  if (!config.blocked_dates || config.blocked_dates.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
   config.blocked_dates.sort();
   list.innerHTML = config.blocked_dates.map(d => {
-    const dateObj = new Date(d + 'T00:00:00');
-    const weekday = ['일','월','화','수','목','금','토'][dateObj.getDay()];
-    return `<li>
-      <span class="date-text">📅 ${d} (${weekday})</span>
-      <button class="remove-btn" onclick="removeDate('${d}')">✕ 해제</button>
-    </li>`;
+    const wd = ['일','월','화','수','목','금','토'][new Date(d+'T00:00:00').getDay()];
+    return `<li><span>📅 ${d} (${wd})</span><button class="btn btn-sm btn-danger" onclick="removeDate('${d}')">✕ 해제</button></li>`;
   }).join('');
 }
 
 function addDateRange() {
-  const fromEl = document.getElementById('new-date-from');
-  const toEl = document.getElementById('new-date-to');
-  const from = fromEl.value;
-  const to = toEl.value || from;
+  const from = document.getElementById('new-date-from').value;
+  const to = document.getElementById('new-date-to').value || from;
   if (!from) return;
   if (!config.blocked_dates) config.blocked_dates = [];
-
-  const start = new Date(from + 'T00:00:00');
-  const end = new Date(to + 'T00:00:00');
-  if (end < start) { showToast('종료일이 시작일보다 빠릅니다'); return; }
-
+  const start = new Date(from+'T00:00:00'), end = new Date(to+'T00:00:00');
+  if (end < start) { showToast('종료일이 시작일보다 빠릅니다', true); return; }
   let added = 0;
   const d = new Date(start);
   while (d <= end) {
     const key = d.toISOString().slice(0,10);
-    if (!config.blocked_dates.includes(key)) {
-      config.blocked_dates.push(key);
-      added++;
-    }
-    d.setDate(d.getDate() + 1);
+    if (!config.blocked_dates.includes(key)) { config.blocked_dates.push(key); added++; }
+    d.setDate(d.getDate()+1);
   }
-
-  fromEl.value = '';
-  toEl.value = '';
-  renderDates();
-  markChanged();
-  if (added > 0) showToast(`${added}일 차단 추가됨`);
-  else showToast('이미 차단된 날짜입니다');
+  document.getElementById('new-date-from').value = '';
+  document.getElementById('new-date-to').value = '';
+  renderDates(); markChanged();
+  showToast(added > 0 ? `${added}일 차단 추가됨` : '이미 차단된 날짜입니다');
 }
 
 function removeDate(date) {
   config.blocked_dates = config.blocked_dates.filter(d => d !== date);
-  renderDates();
-  markChanged();
+  renderDates(); markChanged();
 }
 
 function markChanged() {
   hasChanges = true;
-  document.getElementById('save-status').textContent = '변경사항이 있습니다';
+  document.getElementById('save-bar').classList.add('visible');
 }
 
 async function saveConfig() {
   config.notice = document.getElementById('notice-input').value.trim();
   collectPrices();
   try {
-    await fetch(API_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(config)
-    });
+    await fetch(API_URL, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(config) });
     hasChanges = false;
-    document.getElementById('save-status').textContent = '';
-    updateStatus();
-    showToast('✅ 저장 완료! 주문 페이지에 즉시 반영됩니다.');
-  } catch(e) {
-    showToast('⚠️ 저장 실패. 다시 시도해주세요.', true);
-  }
+    document.getElementById('save-bar').classList.remove('visible');
+    showToast('✅ 저장 완료! 즉시 반영됩니다.');
+  } catch(e) { showToast('⚠️ 저장 실패', true); }
 }
 
-function updateStatus() {
-  const el = document.getElementById('status-display');
-  const cnt = config.blocked_dates ? config.blocked_dates.length : 0;
-  const notice = config.notice ? '있음' : '없음';
-  el.innerHTML = `차단된 날짜: <strong>${cnt}개</strong> · 공지사항: <strong>${notice}</strong>`;
-}
-
-function showToast(msg, isError) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.style.background = isError ? '#c00' : '#2e7d32';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// ── DASHBOARD ──
-const ORDERS_URL = 'https://jsonblob.com/api/jsonBlob/019ccbdd-40a9-7894-8784-363d1356e9cf';
-let allOrders = [];
-let currentPeriod = 'week';
-
+// ── ORDERS ──
 async function loadOrders() {
   try {
     const res = await fetch(ORDERS_URL);
     const data = await res.json();
     allOrders = data.orders || [];
+    renderSummary();
+    renderRecentOrders();
     renderDashboard();
-  } catch(e) {
-    document.getElementById('d-total-orders').textContent = '—';
-  }
+  } catch(e) {}
 }
 
+function renderSummary() {
+  const today = new Date().toISOString().slice(0,10);
+  const now = new Date();
+  const weekAgo = new Date(now - 7*86400000);
+  const todayOrders = allOrders.filter(o => o.timestamp && o.timestamp.slice(0,10) === today);
+  const weekOrders = allOrders.filter(o => new Date(o.timestamp) >= weekAgo);
+  const monthOrders = allOrders.filter(o => { const d = new Date(o.timestamp); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+  const todayRev = todayOrders.reduce((s,o) => s + (o.subtotal||0), 0);
+
+  document.getElementById('s-today').textContent = todayOrders.length;
+  document.getElementById('s-today-rev').textContent = '₩' + todayRev.toLocaleString();
+  document.getElementById('s-week').textContent = weekOrders.length;
+  document.getElementById('s-month').textContent = monthOrders.length;
+}
+
+function renderRecentOrders() {
+  const recent = [...allOrders].reverse().slice(0, 15);
+  document.getElementById('recent-orders').innerHTML = recent.length
+    ? recent.map(o => `<div class="order-row"><span class="o-num">${o.orderNum||'—'}</span><span class="o-name">${o.name||'—'}</span><span class="o-amount">₩${(o.subtotal||0).toLocaleString()}</span><span class="o-date">${o.timestamp ? o.timestamp.slice(5,10) : '—'}</span></div>`).join('')
+    : '<div class="empty-msg">주문 내역이 없습니다</div>';
+}
+
+// ── DASHBOARD ──
 function setPeriod(p, btn) {
   currentPeriod = p;
   document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
@@ -510,15 +483,8 @@ function setPeriod(p, btn) {
 
 function filterByPeriod(orders) {
   const now = new Date();
-  if (currentPeriod === 'week') {
-    const weekAgo = new Date(now - 7*86400000);
-    return orders.filter(o => new Date(o.timestamp) >= weekAgo);
-  } else if (currentPeriod === 'month') {
-    return orders.filter(o => {
-      const d = new Date(o.timestamp);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    });
-  }
+  if (currentPeriod === 'week') return orders.filter(o => new Date(o.timestamp) >= new Date(now - 7*86400000));
+  if (currentPeriod === 'month') return orders.filter(o => { const d = new Date(o.timestamp); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
   return orders;
 }
 
@@ -526,8 +492,6 @@ function renderDashboard() {
   const filtered = filterByPeriod(allOrders);
   const today = new Date().toISOString().slice(0,10);
   const todayOrders = allOrders.filter(o => o.timestamp && o.timestamp.slice(0,10) === today);
-
-  // Summary
   const totalRevenue = filtered.reduce((s,o) => s + (o.subtotal||0), 0);
   const avg = filtered.length ? Math.round(totalRevenue / filtered.length) : 0;
 
@@ -538,164 +502,52 @@ function renderDashboard() {
 
   // Product ranking
   const prodMap = {};
-  filtered.forEach(o => {
-    (o.items||[]).forEach(item => {
-      const name = item.name || '기타';
-      prodMap[name] = (prodMap[name]||0) + item.qty;
-    });
-  });
+  filtered.forEach(o => (o.items||[]).forEach(item => { const n = item.name||'기타'; prodMap[n] = (prodMap[n]||0) + item.qty; }));
   const prodSorted = Object.entries(prodMap).sort((a,b) => b[1]-a[1]);
   const maxQty = prodSorted.length ? prodSorted[0][1] : 1;
-
   document.getElementById('product-ranking').innerHTML = prodSorted.length
-    ? prodSorted.map(([name, qty]) =>
-      `<div class="bar-row">
-        <div class="bar-label">${name}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(qty/maxQty*100)}%"></div></div>
-        <div class="bar-val">${qty}개</div>
-      </div>`
-    ).join('')
-    : '<div style="font-size:0.8rem;color:var(--dim);">데이터 없음</div>';
+    ? prodSorted.map(([n,q]) => `<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill" style="width:${q/maxQty*100}%"></div></div><div class="bar-val">${q}개</div></div>`).join('')
+    : '<div class="empty-msg">데이터 없음</div>';
 
   // Order type
   const typeMap = {};
-  filtered.forEach(o => {
-    const t = o.orderType || '일반주문';
-    typeMap[t] = (typeMap[t]||0) + 1;
-  });
+  filtered.forEach(o => { const t = o.orderType||'일반'; typeMap[t] = (typeMap[t]||0)+1; });
   const typeSorted = Object.entries(typeMap).sort((a,b) => b[1]-a[1]);
   const maxType = typeSorted.length ? typeSorted[0][1] : 1;
-
   document.getElementById('order-type-chart').innerHTML = typeSorted.length
-    ? typeSorted.map(([name, cnt]) =>
-      `<div class="bar-row">
-        <div class="bar-label">${name}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(cnt/maxType*100)}%;background:#a8917a;"></div></div>
-        <div class="bar-val">${cnt}건</div>
-      </div>`
-    ).join('')
-    : '<div style="font-size:0.8rem;color:var(--dim);">데이터 없음</div>';
+    ? typeSorted.map(([n,c]) => `<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill" style="width:${c/maxType*100}%;background:#a8917a;"></div></div><div class="bar-val">${c}건</div></div>`).join('')
+    : '<div class="empty-msg">데이터 없음</div>';
 
-  // Daily charts (last 14 days)
-  const dayMap = {};
-  const revMap = {};
-  const days = [];
-  for (let i = 13; i >= 0; i--) {
-    const d = new Date(Date.now() - i*86400000);
-    const key = d.toISOString().slice(0,10);
-    days.push(key);
-    dayMap[key] = 0;
-    revMap[key] = 0;
-  }
-  filtered.forEach(o => {
-    if (o.timestamp) {
-      const key = o.timestamp.slice(0,10);
-      if (dayMap[key] !== undefined) {
-        dayMap[key]++;
-        revMap[key] += (o.subtotal||0);
-      }
-    }
-  });
+  // Charts
+  const dayMap = {}, revMap = {}, days = [];
+  for (let i = 13; i >= 0; i--) { const d = new Date(Date.now()-i*86400000); const k = d.toISOString().slice(0,10); days.push(k); dayMap[k]=0; revMap[k]=0; }
+  filtered.forEach(o => { if (o.timestamp) { const k = o.timestamp.slice(0,10); if (dayMap[k]!==undefined) { dayMap[k]++; revMap[k]+=(o.subtotal||0); } } });
 
   const labels = days.map(d => d.slice(5));
-  const chartOpts = {
-    responsive: true,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: 'rgba(138,111,85,0.1)' } }
-    }
-  };
+  const baseOpts = { responsive:true, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, grid:{color:'rgba(138,111,85,0.1)'}} } };
 
-  // Destroy old charts
-  if (window._orderChart) window._orderChart.destroy();
-  if (window._revenueChart) window._revenueChart.destroy();
-  if (window._pieChart) window._pieChart.destroy();
+  if (window._oc) window._oc.destroy(); if (window._rc) window._rc.destroy(); if (window._pc) window._pc.destroy();
 
-  // Order count chart
-  window._orderChart = new Chart(document.getElementById('daily-order-canvas'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        data: days.map(d => dayMap[d]),
-        backgroundColor: 'rgba(138,111,85,0.6)',
-        borderColor: '#8a6f55',
-        borderWidth: 1,
-        borderRadius: 4
-      }]
-    },
-    options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, ticks: { stepSize: 1 } } } }
-  });
+  const oc = document.getElementById('daily-order-canvas');
+  const rc = document.getElementById('daily-revenue-canvas');
+  const pc = document.getElementById('product-pie-canvas');
 
-  // Revenue chart
-  window._revenueChart = new Chart(document.getElementById('daily-revenue-canvas'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data: days.map(d => revMap[d]),
-        borderColor: '#8a6f55',
-        backgroundColor: 'rgba(138,111,85,0.1)',
-        fill: true,
-        tension: 0.3,
-        pointBackgroundColor: '#8a6f55',
-        pointRadius: 4
-      }]
-    },
-    options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, ticks: { callback: v => '₩'+v.toLocaleString() } } } }
-  });
+  if (oc) window._oc = new Chart(oc, { type:'bar', data:{ labels, datasets:[{data:days.map(d=>dayMap[d]), backgroundColor:'rgba(138,111,85,0.6)', borderColor:'#8a6f55', borderWidth:1, borderRadius:4}] }, options:{...baseOpts, scales:{...baseOpts.scales, y:{...baseOpts.scales.y, ticks:{stepSize:1}}}} });
+  if (rc) window._rc = new Chart(rc, { type:'line', data:{ labels, datasets:[{data:days.map(d=>revMap[d]), borderColor:'#8a6f55', backgroundColor:'rgba(138,111,85,0.1)', fill:true, tension:0.3, pointBackgroundColor:'#8a6f55', pointRadius:4}] }, options:{...baseOpts, scales:{...baseOpts.scales, y:{...baseOpts.scales.y, ticks:{callback:v=>'₩'+v.toLocaleString()}}}} });
 
-  // Product pie chart
   const prodRevMap = {};
-  filtered.forEach(o => {
-    (o.items||[]).forEach(item => {
-      const name = item.name || '기타';
-      prodRevMap[name] = (prodRevMap[name]||0) + (item.qty * item.unit);
-    });
-  });
-  const pieLabels = Object.keys(prodRevMap);
-  const pieData = Object.values(prodRevMap);
-  const pieColors = ['#8a6f55','#a8917a','#c4a882','#d8cfc4','#e7ded3','#6b5542','#b8a18c','#957a62','#c9b8a5'];
-
-  window._pieChart = new Chart(document.getElementById('product-pie-canvas'), {
-    type: 'doughnut',
-    data: {
-      labels: pieLabels,
-      datasets: [{
-        data: pieData,
-        backgroundColor: pieColors.slice(0, pieLabels.length),
-        borderWidth: 2,
-        borderColor: '#f7f3ef'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
-        tooltip: { callbacks: { label: ctx => `${ctx.label}: ₩${ctx.parsed.toLocaleString()}` } }
-      }
-    }
-  });
-
-  // Recent orders
-  const recent = [...allOrders].reverse().slice(0, 10);
-  document.getElementById('recent-orders').innerHTML = recent.length
-    ? recent.map(o =>
-      `<div class="order-row">
-        <span class="o-num">${o.orderNum||'—'}</span>
-        <span class="o-name">${o.name||'—'}</span>
-        <span class="o-amount">₩${(o.subtotal||0).toLocaleString()}</span>
-        <span class="o-date">${o.timestamp ? o.timestamp.slice(5,10) : '—'}</span>
-      </div>`
-    ).join('')
-    : '<div style="font-size:0.8rem;color:var(--dim);">주문 내역이 없습니다</div>';
+  filtered.forEach(o => (o.items||[]).forEach(item => { const n=item.name||'기타'; prodRevMap[n]=(prodRevMap[n]||0)+(item.qty*item.unit); }));
+  const colors = ['#8a6f55','#a8917a','#c4a882','#d8cfc4','#e7ded3','#6b5542','#b8a18c','#957a62','#c9b8a5'];
+  if (pc) window._pc = new Chart(pc, { type:'doughnut', data:{ labels:Object.keys(prodRevMap), datasets:[{data:Object.values(prodRevMap), backgroundColor:colors.slice(0,Object.keys(prodRevMap).length), borderWidth:2, borderColor:'#fff'}] }, options:{ responsive:true, plugins:{ legend:{position:'bottom',labels:{font:{size:11},padding:12}}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ₩${ctx.parsed.toLocaleString()}`}} } } });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('admin-pw').focus();
-});
-</script>
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = isError ? '#c62828' : '#2e7d32';
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+}
 
+document.addEventListener('DOMContentLoaded', () => document.getElementById('admin-pw').focus());
+</script>
 </body>
 </html>
