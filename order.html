@@ -661,9 +661,39 @@ function generateOrder() {
 byssal.vercel.app 에서 주문
 ━━━━━━━━━━━━━━━━━━`;
 
+  // Save order data
+  const orderData = {
+    orderNum, orderType, name, phone,
+    items: [], subtotal, cakeInfo: '',
+    packaging: pkgs, delivery: deliveryType,
+    receipt: receipt !== '필요없음' ? receipt : '',
+    memo, timestamp: new Date().toISOString()
+  };
+  document.querySelectorAll('.product-row').forEach(row => {
+    const qty = parseInt(row.querySelector('.qty-val').value);
+    if (qty > 0) {
+      orderData.items.push({ name: row.dataset.product, qty, unit: parseInt(row.dataset.unit) });
+    }
+  });
+  if (orderType === '앙금떡케이크') {
+    orderData.cakeInfo = document.getElementById('cake-size').value;
+  }
+  saveOrder(orderData);
+
   document.getElementById('order-text').textContent = text;
   document.getElementById('order-preview').classList.add('visible');
   document.getElementById('order-preview').scrollIntoView({ behavior: 'smooth' });
+}
+
+const ORDERS_URL = 'https://jsonblob.com/api/jsonBlob/019ccbdd-40a9-7894-8784-363d1356e9cf';
+
+async function saveOrder(data) {
+  try {
+    const res = await fetch(ORDERS_URL);
+    const store = await res.json();
+    store.orders.push(data);
+    await fetch(ORDERS_URL, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(store) });
+  } catch(e) { console.log('Order save skipped'); }
 }
 
 function copyOrder() {

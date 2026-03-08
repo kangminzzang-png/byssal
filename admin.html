@@ -94,6 +94,56 @@
   }
   .toast.show { opacity: 1; }
 
+  /* DASHBOARD */
+  .dash-period { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .period-btn {
+    padding: 0.4rem 1rem; border: 1px solid var(--subtle); background: var(--white);
+    font-family: inherit; font-size: 0.75rem; cursor: pointer; transition: all 0.3s;
+  }
+  .period-btn.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
+
+  .dash-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 2rem; }
+  .dash-card {
+    padding: 1.2rem; background: var(--white); border: 1px solid var(--subtle); text-align: center;
+  }
+  .dash-label { font-size: 0.65rem; color: var(--dim); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+  .dash-value { font-size: 1.4rem; font-weight: 500; color: var(--accent); }
+
+  .dash-section { margin-bottom: 1.5rem; }
+  .dash-section h3 { font-size: 0.8rem; margin-bottom: 0.8rem; color: var(--fg); }
+
+  /* BAR CHART */
+  .bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+  .bar-label { width: 80px; font-size: 0.7rem; color: var(--dim); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 20px; background: var(--subtle); position: relative; }
+  .bar-fill { height: 100%; background: var(--accent); transition: width 0.5s; }
+  .bar-val { width: 50px; font-size: 0.7rem; color: var(--fg); }
+
+  /* DAILY CHART */
+  .daily-bars { display: flex; align-items: flex-end; gap: 2px; height: 100px; padding-top: 0.5rem; }
+  .daily-bar {
+    flex: 1; background: var(--accent); min-width: 8px; position: relative; cursor: pointer; transition: opacity 0.2s;
+  }
+  .daily-bar:hover { opacity: 0.7; }
+  .daily-bar .tip {
+    display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: var(--fg); color: var(--white); padding: 0.2rem 0.5rem; font-size: 0.6rem;
+    white-space: nowrap; z-index: 10;
+  }
+  .daily-bar:hover .tip { display: block; }
+  .daily-labels { display: flex; gap: 2px; margin-top: 0.3rem; }
+  .daily-labels span { flex: 1; font-size: 0.5rem; color: var(--dim); text-align: center; min-width: 8px; }
+
+  /* RECENT ORDERS */
+  .order-row {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0; border-bottom: 1px solid var(--subtle); font-size: 0.75rem;
+  }
+  .order-row .o-num { color: var(--accent); font-weight: 500; width: 160px; }
+  .order-row .o-name { flex: 1; }
+  .order-row .o-amount { font-weight: 500; }
+  .order-row .o-date { color: var(--dim); width: 80px; text-align: right; }
+
   @media (max-width: 500px) {
     .admin-panel { padding: 2rem 1.2rem; }
     .date-add { flex-direction: column; }
@@ -141,9 +191,63 @@
   </div>
 
   <!-- CURRENT STATUS -->
-  <div class="section" style="border-bottom:none;">
+  <div class="section">
     <h2>📊 현재 상태</h2>
     <div id="status-display" style="font-size:0.8rem; color:var(--dim);"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section">
+    <h2>📈 매출 대시보드</h2>
+    <div class="dash-period">
+      <button class="period-btn active" onclick="setPeriod('week',this)">이번 주</button>
+      <button class="period-btn" onclick="setPeriod('month',this)">이번 달</button>
+      <button class="period-btn" onclick="setPeriod('all',this)">전체</button>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="dash-cards" id="dash-cards">
+      <div class="dash-card">
+        <div class="dash-label">총 주문</div>
+        <div class="dash-value" id="d-total-orders">0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">총 매출</div>
+        <div class="dash-value" id="d-total-revenue">₩0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">평균 주문금액</div>
+        <div class="dash-value" id="d-avg-order">₩0</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-label">오늘 주문</div>
+        <div class="dash-value" id="d-today-orders">0</div>
+      </div>
+    </div>
+
+    <!-- PRODUCT RANKING -->
+    <div class="dash-section">
+      <h3>🏆 상품별 판매량</h3>
+      <div id="product-ranking"></div>
+    </div>
+
+    <!-- ORDER TYPE -->
+    <div class="dash-section">
+      <h3>📋 주문 유형별</h3>
+      <div id="order-type-chart"></div>
+    </div>
+
+    <!-- DAILY CHART -->
+    <div class="dash-section">
+      <h3>📅 일별 주문 추이</h3>
+      <div id="daily-chart"></div>
+    </div>
+
+    <!-- RECENT ORDERS -->
+    <div class="dash-section">
+      <h3>🕐 최근 주문</h3>
+      <div id="recent-orders"></div>
+    </div>
   </div>
 </div>
 
@@ -177,6 +281,7 @@ async function login() {
     document.getElementById('admin-panel').classList.add('visible');
     document.getElementById('save-bar').classList.add('visible');
     loadConfig();
+    loadOrders();
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
@@ -274,7 +379,138 @@ function showToast(msg, isError) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Auto-login if password stored
+// ── DASHBOARD ──
+const ORDERS_URL = 'https://jsonblob.com/api/jsonBlob/019ccbdd-40a9-7894-8784-363d1356e9cf';
+let allOrders = [];
+let currentPeriod = 'week';
+
+async function loadOrders() {
+  try {
+    const res = await fetch(ORDERS_URL);
+    const data = await res.json();
+    allOrders = data.orders || [];
+    renderDashboard();
+  } catch(e) {
+    document.getElementById('d-total-orders').textContent = '—';
+  }
+}
+
+function setPeriod(p, btn) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function filterByPeriod(orders) {
+  const now = new Date();
+  if (currentPeriod === 'week') {
+    const weekAgo = new Date(now - 7*86400000);
+    return orders.filter(o => new Date(o.timestamp) >= weekAgo);
+  } else if (currentPeriod === 'month') {
+    return orders.filter(o => {
+      const d = new Date(o.timestamp);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+  }
+  return orders;
+}
+
+function renderDashboard() {
+  const filtered = filterByPeriod(allOrders);
+  const today = new Date().toISOString().slice(0,10);
+  const todayOrders = allOrders.filter(o => o.timestamp && o.timestamp.slice(0,10) === today);
+
+  // Summary
+  const totalRevenue = filtered.reduce((s,o) => s + (o.subtotal||0), 0);
+  const avg = filtered.length ? Math.round(totalRevenue / filtered.length) : 0;
+
+  document.getElementById('d-total-orders').textContent = filtered.length;
+  document.getElementById('d-total-revenue').textContent = '₩' + totalRevenue.toLocaleString();
+  document.getElementById('d-avg-order').textContent = '₩' + avg.toLocaleString();
+  document.getElementById('d-today-orders').textContent = todayOrders.length;
+
+  // Product ranking
+  const prodMap = {};
+  filtered.forEach(o => {
+    (o.items||[]).forEach(item => {
+      const name = item.name || '기타';
+      prodMap[name] = (prodMap[name]||0) + item.qty;
+    });
+  });
+  const prodSorted = Object.entries(prodMap).sort((a,b) => b[1]-a[1]);
+  const maxQty = prodSorted.length ? prodSorted[0][1] : 1;
+
+  document.getElementById('product-ranking').innerHTML = prodSorted.length
+    ? prodSorted.map(([name, qty]) =>
+      `<div class="bar-row">
+        <div class="bar-label">${name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(qty/maxQty*100)}%"></div></div>
+        <div class="bar-val">${qty}개</div>
+      </div>`
+    ).join('')
+    : '<div style="font-size:0.8rem;color:var(--dim);">데이터 없음</div>';
+
+  // Order type
+  const typeMap = {};
+  filtered.forEach(o => {
+    const t = o.orderType || '일반주문';
+    typeMap[t] = (typeMap[t]||0) + 1;
+  });
+  const typeSorted = Object.entries(typeMap).sort((a,b) => b[1]-a[1]);
+  const maxType = typeSorted.length ? typeSorted[0][1] : 1;
+
+  document.getElementById('order-type-chart').innerHTML = typeSorted.length
+    ? typeSorted.map(([name, cnt]) =>
+      `<div class="bar-row">
+        <div class="bar-label">${name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(cnt/maxType*100)}%;background:#a8917a;"></div></div>
+        <div class="bar-val">${cnt}건</div>
+      </div>`
+    ).join('')
+    : '<div style="font-size:0.8rem;color:var(--dim);">데이터 없음</div>';
+
+  // Daily chart (last 14 days)
+  const dayMap = {};
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(Date.now() - i*86400000);
+    const key = d.toISOString().slice(0,10);
+    days.push(key);
+    dayMap[key] = 0;
+  }
+  filtered.forEach(o => {
+    if (o.timestamp) {
+      const key = o.timestamp.slice(0,10);
+      if (dayMap[key] !== undefined) dayMap[key]++;
+    }
+  });
+  const maxDay = Math.max(1, ...Object.values(dayMap));
+
+  document.getElementById('daily-chart').innerHTML =
+    `<div class="daily-bars">${days.map(d =>
+      `<div class="daily-bar" style="height:${Math.max(2, dayMap[d]/maxDay*100)}%">
+        <div class="tip">${d.slice(5)} · ${dayMap[d]}건</div>
+      </div>`
+    ).join('')}</div>
+    <div class="daily-labels">${days.map(d =>
+      `<span>${d.slice(8)}</span>`
+    ).join('')}</div>`;
+
+  // Recent orders
+  const recent = [...allOrders].reverse().slice(0, 10);
+  document.getElementById('recent-orders').innerHTML = recent.length
+    ? recent.map(o =>
+      `<div class="order-row">
+        <span class="o-num">${o.orderNum||'—'}</span>
+        <span class="o-name">${o.name||'—'}</span>
+        <span class="o-amount">₩${(o.subtotal||0).toLocaleString()}</span>
+        <span class="o-date">${o.timestamp ? o.timestamp.slice(5,10) : '—'}</span>
+      </div>`
+    ).join('')
+    : '<div style="font-size:0.8rem;color:var(--dim);">주문 내역이 없습니다</div>';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('admin-pw').focus();
 });
