@@ -321,6 +321,10 @@
       <label>Phone or Business Registration Number</label>
       <input type="text" id="cust-receipt-number" placeholder="010-0000-0000 or 000-00-00000">
     </div>
+    <div class="form-row" id="receipt-email-row" style="display:none;">
+      <label>Transaction Statement Email</label>
+      <input type="email" id="cust-receipt-email" placeholder="example@email.com">
+    </div>
     <div class="form-row">
       <label>Special Requests</label>
       <textarea id="cust-memo" placeholder="Flavor preferences, allergies, or any other requests"></textarea>
@@ -378,7 +382,10 @@ fetch(CONFIG_URL).then(r=>r.json()).then(cfg => {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cust-receipt').addEventListener('change', function() {
-    document.getElementById('receipt-number-row').style.display = this.value === '필요없음' ? 'none' : 'block';
+    const isNone = this.value === '필요없음';
+    const isTx = this.value === '거래명세서';
+    document.getElementById('receipt-number-row').style.display = (isNone || isTx) ? 'none' : 'block';
+    document.getElementById('receipt-email-row').style.display = isTx ? 'block' : 'none';
   });
 
   ['pickup-date', 'delivery-date'].forEach(id => {
