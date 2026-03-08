@@ -485,9 +485,32 @@
 </footer>
 
 <script>
+// ═══════════════════════════════════════
+// 🔒 주문 차단 날짜 설정 (YYYY-MM-DD 형식)
+// 주문이 많은 날은 여기에 추가하세요
+const BLOCKED_DATES = [
+  // '2026-03-15',
+  // '2026-03-16',
+];
+const BLOCKED_MESSAGE = '죄송합니다. 해당 날짜는 주문이 마감되었습니다. 다른 날짜를 선택해주세요.';
+// ═══════════════════════════════════════
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cust-receipt').addEventListener('change', function() {
     document.getElementById('receipt-number-row').style.display = this.value === '필요없음' ? 'none' : 'block';
+  });
+
+  // 날짜 차단 체크
+  ['pickup-date', 'delivery-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', function() {
+        if (BLOCKED_DATES.includes(this.value)) {
+          alert(BLOCKED_MESSAGE);
+          this.value = '';
+        }
+      });
+    }
   });
 });
 
