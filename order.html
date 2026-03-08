@@ -146,6 +146,13 @@
   }
 
   /* PACKAGING OPTIONS */
+  .sub-option { padding-left: 1rem; margin-top: -0.5rem; margin-bottom: 0.8rem; border-left: 2px solid var(--fg-subtle); }
+  .sub-option label:first-child { font-size: 0.7rem; color: var(--fg-dim); }
+  .flavor-checks { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+  .flavor-check { display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; cursor: pointer; padding: 0.3rem 0.6rem; border: 1px solid var(--fg-subtle); background: var(--white); transition: all 0.2s; }
+  .flavor-check:has(input:checked) { border-color: var(--accent); background: rgba(138,111,85,0.08); color: var(--accent); }
+  .flavor-check input { display: none; }
+
   .pkg-option {
     display: flex; align-items: center; gap: 0.8rem;
     padding: 0.6rem 0;
@@ -249,63 +256,120 @@
     </div>
   </div>
 
-  <!-- PRODUCTS: 일반주문 (선물세트/개인 구매) -->
+  <!-- PRODUCTS: 일반주문 (개별 상품 + 맛 선택) -->
   <div class="form-section order-section" id="section-normal">
     <h2>상품 선택</h2>
     <div id="product-list">
-      <div class="product-row" data-product="쌀오란다 선물세트(8개입)" data-unit="20000">
-        <span class="prod-emoji">🎁</span>
-        <span class="prod-name">쌀오란다 선물세트 (8개입)</span>
-        <span class="prod-price">₩20,000</span>
+
+      <!-- 쌀오란다 -->
+      <div class="product-row" data-product="쌀오란다" data-unit="1900">
+        <span class="prod-emoji">🍘</span>
+        <span class="prod-name">쌀오란다</span>
+        <span class="prod-price">₩1,900/개</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
           <input class="qty-val" type="number" value="0" min="0" readonly>
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
-      <div class="product-row" data-product="쌀오란다+호두정과 세트" data-unit="29500">
-        <span class="prod-emoji">🎁</span>
-        <span class="prod-name">쌀오란다 + 호두정과 세트</span>
-        <span class="prod-price">₩29,500</span>
+      <div class="form-row sub-option">
+        <label>맛 선택 (종류 수량 상관없이 주문 가능)</label>
+        <div class="flavor-checks" id="oranda-flavors">
+          <label class="flavor-check"><input type="checkbox" value="감태"> 감태</label>
+          <label class="flavor-check"><input type="checkbox" value="견과"> 견과</label>
+          <label class="flavor-check"><input type="checkbox" value="커피땅콩"> 커피땅콩</label>
+          <label class="flavor-check"><input type="checkbox" value="검은깨"> 검은깨</label>
+          <label class="flavor-check"><input type="checkbox" value="인절미"> 인절미</label>
+        </div>
+      </div>
+
+      <!-- 쌀찜카스테라 -->
+      <div class="product-row" data-product="쌀찜카스테라" data-unit="25000">
+        <span class="prod-emoji">🍰</span>
+        <span class="prod-name">쌀찜카스테라 (1세트 10개입)</span>
+        <span class="prod-price">₩25,000/세트</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
           <input class="qty-val" type="number" value="0" min="0" readonly>
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
-      <div class="product-row" data-product="쌀오란다+미니쌀쿠키 세트" data-unit="24500">
-        <span class="prod-emoji">🎁</span>
-        <span class="prod-name">쌀오란다 + 미니쌀쿠키 세트</span>
-        <span class="prod-price">₩24,500</span>
+      <div class="form-row sub-option">
+        <label>맛 선택 (1세트당 2가지 맛 선택 가능)</label>
+        <div class="flavor-checks" id="castella-flavors">
+          <label class="flavor-check"><input type="checkbox" value="단호박"> 단호박</label>
+          <label class="flavor-check"><input type="checkbox" value="쑥"> 쑥</label>
+          <label class="flavor-check"><input type="checkbox" value="초코"> 초코</label>
+          <label class="flavor-check"><input type="checkbox" value="말차"> 말차</label>
+        </div>
+      </div>
+
+      <!-- 미니쌀쿠키 -->
+      <div class="product-row" data-product="미니쌀쿠키" data-unit="7000">
+        <span class="prod-emoji">🍪</span>
+        <span class="prod-name">미니쌀쿠키 (1통)</span>
+        <span class="prod-price">₩7,000/통</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
           <input class="qty-val" type="number" value="0" min="0" readonly>
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
-      <div class="product-row" data-product="종합 선물세트" data-unit="58700">
-        <span class="prod-emoji">🎁</span>
-        <span class="prod-name">종합 선물세트</span>
-        <span class="prod-price">₩58,700</span>
+      <div class="form-row sub-option">
+        <label>맛 선택</label>
+        <div class="flavor-checks" id="cookie-flavors">
+          <label class="flavor-check"><input type="checkbox" value="플레인"> 플레인</label>
+          <label class="flavor-check"><input type="checkbox" value="초코"> 초코</label>
+        </div>
+      </div>
+
+      <!-- 찰꿀빵 -->
+      <div class="product-row" data-product="찰꿀빵" data-unit="30000">
+        <span class="prod-emoji">🍞</span>
+        <span class="prod-name">찰꿀빵 (1세트 10개)</span>
+        <span class="prod-price">₩30,000/세트</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
           <input class="qty-val" type="number" value="0" min="0" readonly>
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
-      <div class="product-row" data-product="찹쌀크럼블케이크" data-unit="35000">
+      <div class="form-row sub-option">
+        <label>맛 선택 (1~2가지 선택, 5개씩 구성)</label>
+        <div class="flavor-checks" id="bread-flavors">
+          <label class="flavor-check"><input type="checkbox" value="모카시나몬"> 모카시나몬</label>
+          <label class="flavor-check"><input type="checkbox" value="쑥"> 쑥</label>
+          <label class="flavor-check"><input type="checkbox" value="홍국"> 홍국</label>
+          <label class="flavor-check"><input type="checkbox" value="초코"> 초코</label>
+        </div>
+      </div>
+
+      <!-- 찹쌀크럼블 -->
+      <div class="product-row" data-product="찹쌀크럼블" data-unit="35000">
         <span class="prod-emoji">🥧</span>
-        <span class="prod-name">찹쌀크럼블케이크</span>
-        <span class="prod-price">₩35,000</span>
+        <span class="prod-name">찹쌀크럼블 (1판 18×18cm, 9조각)</span>
+        <span class="prod-price">₩35,000/판</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
           <input class="qty-val" type="number" value="0" min="0" readonly>
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
+      <div class="form-row sub-option">
+        <label>맛 선택 (1판에 1가지 맛)</label>
+        <select id="crumble-flavor">
+          <option value="애플시나몬">애플시나몬 (수제 사과조림)</option>
+          <option value="단호박">단호박 (찐 단호박 & 완두콩)</option>
+          <option value="쑥">쑥 (국내산쑥 & 호두 & 팥)</option>
+          <option value="초코">초코 (발로나초코 & 호두)</option>
+          <option value="흑미무화과">흑미무화과 (흑미 & 무화과 & 호두)</option>
+        </select>
+      </div>
+
+      <!-- 호두정과 -->
       <div class="product-row" data-product="호두정과" data-unit="12000">
         <span class="prod-emoji">🥜</span>
-        <span class="prod-name">호두정과 (120g)</span>
+        <span class="prod-name">호두정과 (1통 120g)</span>
         <span class="prod-price">₩12,000/통</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
@@ -313,25 +377,7 @@
           <button class="qty-btn" onclick="changeQty(this,1)">+</button>
         </div>
       </div>
-    </div>
-    <div class="form-row" style="margin-top:1rem;">
-      <label>쌀오란다 맛 선택</label>
-      <select id="normal-oranda-flavor">
-        <option value="혼합(5가지맛)">혼합 (5가지맛)</option>
-        <option value="감태">감태</option>
-        <option value="인절미">인절미</option>
-        <option value="검은깨">검은깨</option>
-        <option value="견과">견과</option>
-        <option value="커피땅콩">커피땅콩</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>미니쌀쿠키 맛 선택</label>
-      <select id="normal-cookie-flavor">
-        <option value="혼합">혼합</option>
-        <option value="플레인">플레인</option>
-        <option value="초코">초코</option>
-      </select>
+
     </div>
   </div>
 
@@ -859,11 +905,22 @@ function generateOrder() {
 
   if (cakeInfo) text += cakeInfo + '\n';
 
-  // 일반주문 추가 정보
+  // 일반주문 맛 선택 정보
   if (orderType === '일반주문') {
-    const oFlavor = document.getElementById('normal-oranda-flavor').value;
-    const cFlavor = document.getElementById('normal-cookie-flavor').value;
-    text += `\n🍘 옵션\n  · 쌀오란다 맛: ${oFlavor}\n  · 미니쌀쿠키 맛: ${cFlavor}\n`;
+    const flavors = [];
+    const oFlavors = [...document.querySelectorAll('#oranda-flavors input:checked')].map(c=>c.value);
+    if (oFlavors.length) flavors.push(`  · 쌀오란다 맛: ${oFlavors.join(', ')}`);
+    const cFlavors = [...document.querySelectorAll('#castella-flavors input:checked')].map(c=>c.value);
+    if (cFlavors.length) flavors.push(`  · 쌀찜카스테라 맛: ${cFlavors.join(', ')}`);
+    const ckFlavors = [...document.querySelectorAll('#cookie-flavors input:checked')].map(c=>c.value);
+    if (ckFlavors.length) flavors.push(`  · 미니쌀쿠키 맛: ${ckFlavors.join(', ')}`);
+    const bFlavors = [...document.querySelectorAll('#bread-flavors input:checked')].map(c=>c.value);
+    if (bFlavors.length) flavors.push(`  · 찰꿀빵 맛: ${bFlavors.join(', ')}`);
+    const crumbleFl = document.getElementById('crumble-flavor');
+    // Only include crumble flavor if crumble is ordered
+    const crumbleQty = document.querySelector('[data-product="찹쌀크럼블"] .qty-val');
+    if (crumbleQty && parseInt(crumbleQty.value) > 0) flavors.push(`  · 찹쌀크럼블 맛: ${crumbleFl.value}`);
+    if (flavors.length) text += `\n🍽️ 맛 선택\n${flavors.join('\n')}\n`;
   }
 
   // 선물세트 추가 정보
