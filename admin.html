@@ -152,6 +152,19 @@
   .page-nav button { padding: 0.3rem 0.7rem; border: 1px solid var(--subtle); background: var(--white); font-family: inherit; font-size: 0.7rem; cursor: pointer; }
   .page-nav button.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
 
+  /* HOME */
+  .home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin-bottom: 1.5rem; }
+  .home-card { background: var(--white); border: 1px solid var(--subtle); padding: 1.2rem; cursor: pointer; transition: all 0.2s; }
+  .home-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .home-card .hc-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+  .home-card .hc-num { font-size: 1.6rem; font-weight: 600; color: var(--accent); }
+  .home-card .hc-label { font-size: 0.6rem; color: var(--dim); letter-spacing: 0.1em; margin-top: 0.15rem; }
+  .home-recent { margin-top: 1rem; }
+  .home-recent h3 { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.6rem; }
+  .home-greeting { font-size: 1.1rem; font-weight: 500; color: var(--dark); margin-bottom: 0.3rem; }
+  .home-date { font-size: 0.7rem; color: var(--dim); margin-bottom: 1.5rem; }
+  @media (max-width: 768px) { .home-grid { grid-template-columns: 1fr 1fr; } }
+
   /* CUSTOMERS */
   .customer-card { background: var(--white); border: 1px solid var(--subtle); padding: 0.8rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.8rem; }
   .customer-card:hover { border-color: var(--accent); }
@@ -258,8 +271,9 @@
       <div class="s-sub">RICE DESSERT & CAKE</div>
     </div>
     <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="switchTab('home',this)"><span class="nav-icon">🏠</span>홈</div>
       <div class="nav-group-label">주문 관리</div>
-      <div class="nav-item active" onclick="switchTab('orders',this)"><span class="nav-icon">📋</span>주문 현황</div>
+      <div class="nav-item" onclick="switchTab('orders',this)"><span class="nav-icon">📋</span>주문 현황</div>
       <div class="nav-item" onclick="switchTab('history',this)"><span class="nav-icon">📜</span>주문 이력</div>
       <div class="nav-item" onclick="switchTab('customers',this)"><span class="nav-icon">👥</span>고객 DB</div>
       <div class="nav-item" onclick="switchTab('blocked',this)"><span class="nav-icon">🔒</span>날짜 차단</div>
@@ -280,8 +294,46 @@
   <!-- MAIN -->
   <div class="main">
 
+    <!-- TAB: HOME -->
+    <div class="tab-panel active" id="tab-home">
+      <div class="section">
+        <div class="home-greeting" id="home-greeting">안녕하세요 👋</div>
+        <div class="home-date" id="home-date"></div>
+        <div class="home-grid" id="home-grid">
+          <div class="home-card" onclick="switchTabByName('orders')">
+            <div class="hc-icon">📋</div>
+            <div class="hc-num" id="hc-total-orders">—</div>
+            <div class="hc-label">총 주문</div>
+          </div>
+          <div class="home-card" onclick="switchTabByName('dashboard')">
+            <div class="hc-icon">💰</div>
+            <div class="hc-num" id="hc-total-revenue">—</div>
+            <div class="hc-label">총 매출</div>
+          </div>
+          <div class="home-card" onclick="switchTabByName('customers')">
+            <div class="hc-icon">👥</div>
+            <div class="hc-num" id="hc-total-customers">—</div>
+            <div class="hc-label">고객 수</div>
+          </div>
+          <div class="home-card" onclick="switchTabByName('orders')">
+            <div class="hc-icon">📅</div>
+            <div class="hc-num" id="hc-today">—</div>
+            <div class="hc-label">오늘 주문</div>
+          </div>
+        </div>
+        <div class="home-recent">
+          <h3>📌 최근 주문</h3>
+          <div id="home-recent-list"></div>
+        </div>
+        <div class="home-recent" style="margin-top:1.5rem;">
+          <h3>🏆 TOP 고객</h3>
+          <div id="home-top-customers"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- TAB: ORDERS -->
-    <div class="tab-panel active" id="tab-orders">
+    <div class="tab-panel" id="tab-orders">
       <div class="page-header"><h1>📋 주문 현황</h1><p>최근 주문 내역과 오늘 현황을 확인합니다</p></div>
       <div class="dash-cards" id="summary-cards">
         <div class="dash-card"><div class="dash-label">오늘 주문</div><div class="dash-value" id="s-today">0</div></div>
@@ -604,6 +656,7 @@ function switchTab(id, el) {
   // Close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
   // Re-render charts when switching to them
+  if (id === 'home') renderHome();
   if (id === 'dashboard' || id === 'products-analytics') renderDashboard();
   if (id === 'history') renderHistory();
   if (id === 'customers') renderCustomers();
@@ -711,6 +764,7 @@ async function loadOrders() {
       allOrders = data.orders || [];
     } catch(e) { console.error('Orders load failed:', e); }
   }
+  renderHome();
   renderSummary();
   renderRecentOrders();
   renderHistory();
@@ -1111,6 +1165,58 @@ function openCustDetail(name) {
 function closeCustDetail() {
   document.getElementById('cust-overlay').classList.remove('show');
   document.body.style.overflow = '';
+}
+
+// ── HOME ──
+function renderHome() {
+  const now = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  const h = now.getHours();
+  const greeting = h < 12 ? '좋은 아침이에요 ☀️' : h < 18 ? '좋은 오후예요 🌤️' : '수고했어요 🌙';
+  document.getElementById('home-greeting').textContent = greeting;
+  document.getElementById('home-date').textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+
+  const today = now.toISOString().slice(0,10);
+  const todayOrders = allOrders.filter(o => o.timestamp && o.timestamp.slice(0,10) === today);
+  const totalRevenue = allOrders.reduce((s,o) => s + (o.subtotal||0), 0);
+
+  // Unique customers
+  const custSet = new Set();
+  allOrders.forEach(o => { if (o.name) custSet.add(o.name); });
+
+  // Unique order numbers
+  const orderSet = new Set();
+  allOrders.forEach(o => { if (o.orderNum) orderSet.add(o.orderNum); });
+
+  document.getElementById('hc-total-orders').textContent = orderSet.size || allOrders.length;
+  document.getElementById('hc-total-revenue').textContent = '₩' + totalRevenue.toLocaleString();
+  document.getElementById('hc-total-customers').textContent = custSet.size;
+  document.getElementById('hc-today').textContent = todayOrders.length + '건';
+
+  // Recent 5 orders
+  const recent = [...allOrders].sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||'')).slice(0, 5);
+  document.getElementById('home-recent-list').innerHTML = recent.length
+    ? recent.map(o => `<div class="order-row"><span class="o-num">${o.orderNum||'—'}</span><span class="o-name">${o.name||'—'}</span><span class="o-amount">₩${(o.subtotal||0).toLocaleString()}</span><span class="o-date">${o.timestamp ? o.timestamp.slice(0,10) : '—'}</span></div>`).join('')
+    : '<div style="font-size:0.7rem;color:var(--dim);padding:1rem 0;">주문 내역이 없습니다</div>';
+
+  // Top 3 customers
+  const custMap = {};
+  allOrders.forEach(o => {
+    if (!o.name) return;
+    if (!custMap[o.name]) custMap[o.name] = { total: 0, count: 0 };
+    custMap[o.name].total += (o.subtotal||0);
+    custMap[o.name].count++;
+  });
+  const topCust = Object.entries(custMap).sort((a,b) => b[1].total - a[1].total).slice(0, 3);
+  document.getElementById('home-top-customers').innerHTML = topCust.map(([name, d], i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉';
+    return `<div class="order-row" style="cursor:pointer;" onclick="switchTabByName('customers')"><span class="o-num">${medal}</span><span class="o-name">${name}</span><span class="o-amount">₩${d.total.toLocaleString()}</span><span class="o-date">${d.count}건</span></div>`;
+  }).join('');
+}
+
+function switchTabByName(id) {
+  const el = document.querySelector(`.nav-item[onclick*="'${id}'"]`);
+  if (el) switchTab(id, el);
 }
 
 // ── ANALYTICS PERIOD ──
