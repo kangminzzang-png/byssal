@@ -174,9 +174,12 @@
       주문이 많은 날 차단하면, 고객이 해당 날짜로 주문할 수 없습니다.
     </p>
     <div class="date-add">
-      <input type="date" id="new-date">
-      <button onclick="addDate()">+ 추가</button>
+      <input type="date" id="new-date-from">
+      <span style="font-size:0.8rem; color:var(--dim);">~</span>
+      <input type="date" id="new-date-to">
+      <button onclick="addDateRange()">+ 추가</button>
     </div>
+    <p style="font-size:0.65rem; color:var(--dim); margin-bottom:0.8rem;">한 날짜만 선택하면 하루만, 두 날짜 모두 선택하면 기간 전체가 차단됩니다.</p>
     <ul class="blocked-list" id="blocked-list"></ul>
     <div class="empty-msg" id="empty-msg">차단된 날짜가 없습니다</div>
   </div>
@@ -321,19 +324,35 @@ function renderDates() {
   }).join('');
 }
 
-function addDate() {
-  const input = document.getElementById('new-date');
-  const date = input.value;
-  if (!date) return;
+function addDateRange() {
+  const fromEl = document.getElementById('new-date-from');
+  const toEl = document.getElementById('new-date-to');
+  const from = fromEl.value;
+  const to = toEl.value || from;
+  if (!from) return;
   if (!config.blocked_dates) config.blocked_dates = [];
-  if (config.blocked_dates.includes(date)) {
-    showToast('이미 차단된 날짜입니다');
-    return;
+
+  const start = new Date(from + 'T00:00:00');
+  const end = new Date(to + 'T00:00:00');
+  if (end < start) { showToast('종료일이 시작일보다 빠릅니다'); return; }
+
+  let added = 0;
+  const d = new Date(start);
+  while (d <= end) {
+    const key = d.toISOString().slice(0,10);
+    if (!config.blocked_dates.includes(key)) {
+      config.blocked_dates.push(key);
+      added++;
+    }
+    d.setDate(d.getDate() + 1);
   }
-  config.blocked_dates.push(date);
-  input.value = '';
+
+  fromEl.value = '';
+  toEl.value = '';
   renderDates();
   markChanged();
+  if (added > 0) showToast(`${added}일 차단 추가됨`);
+  else showToast('이미 차단된 날짜입니다');
 }
 
 function removeDate(date) {
