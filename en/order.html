@@ -309,6 +309,19 @@
       </div>
     </div>
     <div class="form-row">
+      <label>Tax Receipt</label>
+      <select id="cust-receipt">
+        <option value="필요없음">Not needed</option>
+        <option value="현금영수증(소득공제)">Cash Receipt (Income Deduction)</option>
+        <option value="현금영수증(지출증빙)">Cash Receipt (Expense Proof)</option>
+        <option value="세금계산서">Tax Invoice</option>
+      </select>
+    </div>
+    <div class="form-row" id="receipt-number-row" style="display:none;">
+      <label>Phone or Business Registration Number</label>
+      <input type="text" id="cust-receipt-number" placeholder="010-0000-0000 or 000-00-00000">
+    </div>
+    <div class="form-row">
       <label>Special Requests</label>
       <textarea id="cust-memo" placeholder="Flavor preferences, allergies, or any other requests"></textarea>
     </div>
@@ -334,6 +347,12 @@
 </footer>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('cust-receipt').addEventListener('change', function() {
+    document.getElementById('receipt-number-row').style.display = this.value === '필요없음' ? 'none' : 'block';
+  });
+});
+
 let orderType = 'general';
 let orderTypeKr = '일반주문';
 let deliveryType = '매장픽업';
@@ -415,6 +434,8 @@ function generateOrder() {
     if (date) deliveryInfo += `\n  · 희망일: ${date}`;
   }
 
+  const receipt = document.getElementById('cust-receipt').value;
+  const receiptNum = document.getElementById('cust-receipt-number').value.trim();
   const memo = document.getElementById('cust-memo').value.trim();
 
   let text = `━━━━━━━━━━━━━━━━━━
@@ -440,6 +461,12 @@ function generateOrder() {
   }
 
   text += `\n🚚 수령 방법\n${deliveryInfo}\n`;
+
+  if (receipt !== '필요없음') {
+    text += `\n🧾 증빙서류 (Tax Receipt)\n  · ${receipt}`;
+    if (receiptNum) text += `\n  · 번호: ${receiptNum}`;
+    text += '\n';
+  }
 
   if (memo) {
     text += `\n💬 요청사항 (Special Requests)\n  ${memo}\n`;
