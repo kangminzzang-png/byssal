@@ -584,10 +584,18 @@ function generateOrder() {
   const memo = document.getElementById('cust-memo').value.trim();
 
   // Build order text
+  // Generate order number: BS-YYYYMMDD-HHMM-XXX
+  const now = new Date();
+  const dateStr = now.getFullYear().toString() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
+  const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+  const rand = String(Math.floor(Math.random()*900)+100);
+  const orderNum = `BS-${dateStr}-${timeStr}-${rand}`;
+
   let text = `━━━━━━━━━━━━━━━━━━
 🌾 바이쌀 BYSSAL 주문서
 ━━━━━━━━━━━━━━━━━━
 
+🔖 주문번호: ${orderNum}
 📋 주문 유형: ${orderType}
 
 👤 주문자 정보
