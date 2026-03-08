@@ -574,8 +574,18 @@ async function login() {
       localStorage.setItem(DEVICE_KEY, ADMIN_PW_HASH);
     }
     enterApp();
-    // Try registering Face ID (only in Safari, silently skip if not supported)
-    registerBiometric();
+    // Offer Face ID registration if supported and not yet registered
+    if (!localStorage.getItem(CRED_KEY)) {
+      setTimeout(async () => {
+        try {
+          if (!window.PublicKeyCredential) return;
+          const ok = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+          if (ok && confirm('🔐 Face ID / 생체인증을 등록하시겠습니까?\n다음부터 비밀번호 없이 로그인할 수 있습니다.')) {
+            await registerBiometric();
+          }
+        } catch(e) {}
+      }, 800);
+    }
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
