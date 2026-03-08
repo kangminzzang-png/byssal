@@ -240,10 +240,22 @@
       <div id="order-type-chart"></div>
     </div>
 
-    <!-- DAILY CHART -->
+    <!-- DAILY ORDER CHART -->
     <div class="dash-section">
       <h3>📅 일별 주문 추이</h3>
-      <div id="daily-chart"></div>
+      <canvas id="daily-order-canvas" height="200"></canvas>
+    </div>
+
+    <!-- DAILY REVENUE CHART -->
+    <div class="dash-section">
+      <h3>💰 일별 매출 추이</h3>
+      <canvas id="daily-revenue-canvas" height="200"></canvas>
+    </div>
+
+    <!-- PRODUCT PIE -->
+    <div class="dash-section">
+      <h3>🍰 상품별 매출 비중</h3>
+      <canvas id="product-pie-canvas" height="250"></canvas>
     </div>
 
     <!-- RECENT ORDERS -->
@@ -262,6 +274,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
 const API_URL = 'https://jsonblob.com/api/jsonBlob/019ccbd9-9baa-7bd9-b9df-c4be1c19c0b2';
 const ADMIN_PW_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'; // "admin" sha256
@@ -489,32 +502,107 @@ function renderDashboard() {
     ).join('')
     : '<div style="font-size:0.8rem;color:var(--dim);">데이터 없음</div>';
 
-  // Daily chart (last 14 days)
+  // Daily charts (last 14 days)
   const dayMap = {};
+  const revMap = {};
   const days = [];
   for (let i = 13; i >= 0; i--) {
     const d = new Date(Date.now() - i*86400000);
     const key = d.toISOString().slice(0,10);
     days.push(key);
     dayMap[key] = 0;
+    revMap[key] = 0;
   }
   filtered.forEach(o => {
     if (o.timestamp) {
       const key = o.timestamp.slice(0,10);
-      if (dayMap[key] !== undefined) dayMap[key]++;
+      if (dayMap[key] !== undefined) {
+        dayMap[key]++;
+        revMap[key] += (o.subtotal||0);
+      }
     }
   });
-  const maxDay = Math.max(1, ...Object.values(dayMap));
 
-  document.getElementById('daily-chart').innerHTML =
-    `<div class="daily-bars">${days.map(d =>
-      `<div class="daily-bar" style="height:${Math.max(2, dayMap[d]/maxDay*100)}%">
-        <div class="tip">${d.slice(5)} · ${dayMap[d]}건</div>
-      </div>`
-    ).join('')}</div>
-    <div class="daily-labels">${days.map(d =>
-      `<span>${d.slice(8)}</span>`
-    ).join('')}</div>`;
+  const labels = days.map(d => d.slice(5));
+  const chartOpts = {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: 'rgba(138,111,85,0.1)' } }
+    }
+  };
+
+  // Destroy old charts
+  if (window._orderChart) window._orderChart.destroy();
+  if (window._revenueChart) window._revenueChart.destroy();
+  if (window._pieChart) window._pieChart.destroy();
+
+  // Order count chart
+  window._orderChart = new Chart(document.getElementById('daily-order-canvas'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: days.map(d => dayMap[d]),
+        backgroundColor: 'rgba(138,111,85,0.6)',
+        borderColor: '#8a6f55',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, ticks: { stepSize: 1 } } } }
+  });
+
+  // Revenue chart
+  window._revenueChart = new Chart(document.getElementById('daily-revenue-canvas'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: days.map(d => revMap[d]),
+        borderColor: '#8a6f55',
+        backgroundColor: 'rgba(138,111,85,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointBackgroundColor: '#8a6f55',
+        pointRadius: 4
+      }]
+    },
+    options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, ticks: { callback: v => '₩'+v.toLocaleString() } } } }
+  });
+
+  // Product pie chart
+  const prodRevMap = {};
+  filtered.forEach(o => {
+    (o.items||[]).forEach(item => {
+      const name = item.name || '기타';
+      prodRevMap[name] = (prodRevMap[name]||0) + (item.qty * item.unit);
+    });
+  });
+  const pieLabels = Object.keys(prodRevMap);
+  const pieData = Object.values(prodRevMap);
+  const pieColors = ['#8a6f55','#a8917a','#c4a882','#d8cfc4','#e7ded3','#6b5542','#b8a18c','#957a62','#c9b8a5'];
+
+  window._pieChart = new Chart(document.getElementById('product-pie-canvas'), {
+    type: 'doughnut',
+    data: {
+      labels: pieLabels,
+      datasets: [{
+        data: pieData,
+        backgroundColor: pieColors.slice(0, pieLabels.length),
+        borderWidth: 2,
+        borderColor: '#f7f3ef'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+        tooltip: { callbacks: { label: ctx => `${ctx.label}: ₩${ctx.parsed.toLocaleString()}` } }
+      }
+    }
+  });
 
   // Recent orders
   const recent = [...allOrders].reverse().slice(0, 10);
