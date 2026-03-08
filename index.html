@@ -839,6 +839,34 @@
     nav.classList.toggle('scrolled', window.scrollY > 80);
   });
 
+  // Mobile menu toggle
+  const mobileBtn = document.querySelector('.nav-mobile');
+  const navLinks = document.querySelector('.nav-links');
+  mobileBtn.addEventListener('click', () => {
+    if (navLinks.style.display === 'flex') {
+      navLinks.style.display = 'none';
+    } else {
+      navLinks.style.display = 'flex';
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.position = 'absolute';
+      navLinks.style.top = '100%';
+      navLinks.style.left = '0';
+      navLinks.style.right = '0';
+      navLinks.style.background = 'rgba(247,243,239,0.98)';
+      navLinks.style.padding = '1.5rem';
+      navLinks.style.gap = '1.5rem';
+      navLinks.style.borderBottom = '1px solid var(--fg-subtle)';
+      navLinks.style.backdropFilter = 'blur(15px)';
+    }
+  });
+
+  // Close menu on link click
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 768) navLinks.style.display = 'none';
+    });
+  });
+
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
