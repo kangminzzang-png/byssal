@@ -59,6 +59,13 @@
   .form-row textarea { resize: vertical; min-height: 80px; }
   .form-row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
+  .sub-option { padding-left: 1rem; margin-top: -0.5rem; margin-bottom: 0.8rem; border-left: 2px solid var(--fg-subtle); }
+  .sub-option > label:first-child { font-size: 0.7rem; color: var(--fg-dim); display: block; margin-bottom: 0.4rem; }
+  .flavor-rows { display: flex; flex-direction: column; gap: 0.3rem; }
+  .flavor-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; }
+  .flavor-row .fl-name { min-width: 100px; }
+  .flavor-row .qty-control { transform: scale(0.85); transform-origin: left; }
+
   .pkg-option { display: flex; align-items: center; gap: 0.8rem; padding: 0.6rem 0; }
   .pkg-option input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
   .pkg-option label { font-size: 0.8rem; color: var(--fg); cursor: pointer; margin: 0; }
@@ -114,81 +121,112 @@
     </div>
   </div>
 
-  <!-- PRODUCTS -->
-  <div class="form-section">
+  <!-- PRODUCTS: General Order -->
+  <div class="form-section order-section" id="section-normal">
     <h2>Select Products</h2>
     <div id="product-list">
-      <div class="product-row" data-product="Rice Oranda" data-kr="쌀오란다" data-unit="1900">
-        <span class="prod-emoji">🍘</span>
-        <span class="prod-name">Rice Oranda<small>쌀오란다</small></span>
-        <span class="prod-price">₩1,900/ea</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="쌀오란다" data-en="Rice Oranda" data-unit="1900">
+        <div class="product-row"><span class="prod-emoji">🍘</span><span class="prod-name">Rice Oranda<small>쌀오란다</small></span><span class="prod-price">₩1,900/ea</span></div>
+        <div class="form-row sub-option">
+          <label>Select flavors & quantity</label>
+          <div class="flavor-rows" id="oranda-flavors">
+            <div class="flavor-row"><span class="fl-name">Gamtae 감태</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Mixed Nuts 견과</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Coffee Peanut 커피땅콩</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Black Sesame 검은깨</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Injeolmi 인절미</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
-      <div class="product-row" data-product="Steamed Rice Castella" data-kr="쌀찜카스테라" data-unit="2500">
-        <span class="prod-emoji">🍰</span>
-        <span class="prod-name">Steamed Rice Castella<small>쌀찜카스테라</small></span>
-        <span class="prod-price">₩2,500/ea</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="쌀찜카스테라" data-en="Steamed Rice Castella" data-unit="25000">
+        <div class="product-row"><span class="prod-emoji">🍰</span><span class="prod-name">Steamed Rice Castella (10pcs/set)<small>쌀찜카스테라</small></span><span class="prod-price">₩25,000/set</span></div>
+        <div class="form-row sub-option">
+          <label>Two-tone set (2 flavors per set)</label>
+          <div class="flavor-rows" id="castella-flavors">
+            <div class="flavor-row"><span class="fl-name">Pumpkin & Mugwort</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Choco & Matcha</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Beet & Mugwort</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
-      <div class="product-row" data-product="Mini Rice Cookies" data-kr="미니쌀쿠키" data-unit="7000">
-        <span class="prod-emoji">🍪</span>
-        <span class="prod-name">Mini Rice Cookies (jar)<small>미니쌀쿠키</small></span>
-        <span class="prod-price">₩7,000/jar</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="미니쌀쿠키" data-en="Mini Rice Cookies" data-unit="7000">
+        <div class="product-row"><span class="prod-emoji">🍪</span><span class="prod-name">Mini Rice Cookies (1 jar)<small>미니쌀쿠키</small></span><span class="prod-price">₩7,000/jar</span></div>
+        <div class="form-row sub-option">
+          <label>Select flavors & quantity</label>
+          <div class="flavor-rows" id="cookie-flavors">
+            <div class="flavor-row"><span class="fl-name">Mixed 혼합</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Plain 플레인</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Choco 초코</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
-      <div class="product-row" data-product="Sticky Honey Bread" data-kr="찰꿀빵" data-unit="3000">
-        <span class="prod-emoji">🍞</span>
-        <span class="prod-name">Sticky Honey Bread<small>찰꿀빵</small></span>
-        <span class="prod-price">₩3,000/ea</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="찰꿀빵" data-en="Sticky Honey Bread" data-unit="30000">
+        <div class="product-row"><span class="prod-emoji">🍞</span><span class="prod-name">Sticky Honey Bread (10pcs/set)<small>찰꿀빵</small></span><span class="prod-price">₩30,000/set</span></div>
+        <div class="form-row sub-option">
+          <label>Select flavors (5pcs each, 1-2 flavors per set)</label>
+          <div class="flavor-rows" id="bread-flavors">
+            <div class="flavor-row"><span class="fl-name">Mocha Cinnamon</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Mugwort 쑥</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Hongkuk 홍국</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Choco 초코</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
-      <div class="product-row" data-product="Glutinous Rice Crumble" data-kr="찹쌀크럼블" data-unit="4000">
-        <span class="prod-emoji">🥧</span>
-        <span class="prod-name">Glutinous Rice Crumble<small>찹쌀크럼블</small></span>
-        <span class="prod-price">₩4,000/ea</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="찹쌀크럼블" data-en="Glutinous Rice Crumble" data-unit="35000">
+        <div class="product-row"><span class="prod-emoji">🥧</span><span class="prod-name">Glutinous Rice Crumble (18×18cm, 9pcs)<small>찹쌀크럼블</small></span><span class="prod-price">₩35,000/pan</span></div>
+        <div class="form-row sub-option">
+          <label>Select flavor & quantity per pan</label>
+          <div class="flavor-rows" id="crumble-flavors">
+            <div class="flavor-row"><span class="fl-name">Apple Cinnamon</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Sweet Pumpkin</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Mugwort 쑥</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Choco 초코</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+            <div class="flavor-row"><span class="fl-name">Black Rice Fig</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
-      <div class="product-row" data-product="Walnut Jeonggwa" data-kr="호두정과" data-unit="12000">
-        <span class="prod-emoji">🥜</span>
-        <span class="prod-name">Walnut Jeonggwa (120g)<small>호두정과</small></span>
-        <span class="prod-price">₩12,000/jar</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
-        </div>
-      </div>
-      <div class="product-row" data-product="Medjool Dates" data-kr="데이츠" data-unit="5000">
-        <span class="prod-emoji">🌴</span>
-        <span class="prod-name">Medjool Dates<small>데이츠</small></span>
-        <span class="prod-price">₩5,000/ea</span>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(this,-1)">−</button>
-          <input class="qty-val" type="number" value="0" min="0" readonly>
-          <button class="qty-btn" onclick="changeQty(this,1)">+</button>
+      <div class="product-group" data-product="호두정과" data-en="Walnut Jeonggwa" data-unit="12000">
+        <div class="product-row"><span class="prod-emoji">🥜</span><span class="prod-name">Walnut Jeonggwa (120g)<small>호두정과</small></span><span class="prod-price">₩12,000/jar</span></div>
+        <div class="form-row sub-option">
+          <div class="flavor-rows">
+            <div class="flavor-row"><span class="fl-name">Walnut Jeonggwa</span><div class="qty-control"><button class="qty-btn" onclick="changeFlavorQty(this,-1)">−</button><input class="fl-qty" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeFlavorQty(this,1)">+</button></div></div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- PRODUCTS: Gift Set -->
+  <div class="form-section order-section" id="section-gift" style="display:none;">
+    <h2>Gift Set Selection</h2>
+    <div class="gift-products">
+      <div class="product-row" data-product="Rice Oranda Gift Set (8pcs)" data-kr="쌀오란다 선물세트(8개입)" data-unit="20000"><span class="prod-emoji">🎁</span><span class="prod-name">Rice Oranda Gift Set (8pcs)</span><span class="prod-price">₩20,000</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Oranda + Walnut Set" data-kr="쌀오란다+호두정과 세트" data-unit="29500"><span class="prod-emoji">🎁</span><span class="prod-name">Oranda + Walnut Jeonggwa Set</span><span class="prod-price">₩29,500</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Oranda + Cookie Set" data-kr="쌀오란다+미니쌀쿠키 세트" data-unit="24500"><span class="prod-emoji">🎁</span><span class="prod-name">Oranda + Mini Cookie Set</span><span class="prod-price">₩24,500</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Premium Gift Set" data-kr="종합 선물세트" data-unit="58700"><span class="prod-emoji">🎁</span><span class="prod-name">Premium Gift Set</span><span class="prod-price">₩58,700</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS: Favors -->
+  <div class="form-section order-section" id="section-return" style="display:none;">
+    <h2>Return Favors</h2>
+    <p style="font-size:0.75rem; color:var(--fg-dim); margin-bottom:1rem;">Bulk order discounts available. Final price confirmed after consultation.</p>
+    <div class="return-products">
+      <div class="product-row" data-product="Rice Oranda" data-kr="쌀오란다" data-unit="1900"><span class="prod-emoji">🍘</span><span class="prod-name">Rice Oranda<small>쌀오란다</small></span><span class="prod-price">₩1,900/ea</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Steamed Rice Castella" data-kr="쌀찜카스테라" data-unit="2500"><span class="prod-emoji">🍰</span><span class="prod-name">Steamed Rice Castella<small>쌀찜카스테라</small></span><span class="prod-price">₩2,500/ea</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Mini Rice Cookies" data-kr="미니쌀쿠키" data-unit="7000"><span class="prod-emoji">🍪</span><span class="prod-name">Mini Rice Cookies<small>미니쌀쿠키</small></span><span class="prod-price">₩7,000/jar</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Sticky Honey Bread" data-kr="찰꿀빵" data-unit="3000"><span class="prod-emoji">🍞</span><span class="prod-name">Sticky Honey Bread<small>찰꿀빵</small></span><span class="prod-price">₩3,000/ea</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Glutinous Rice Crumble" data-kr="찹쌀크럼블" data-unit="4000"><span class="prod-emoji">🥧</span><span class="prod-name">Glutinous Rice Crumble<small>찹쌀크럼블</small></span><span class="prod-price">₩4,000/ea</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Walnut Jeonggwa" data-kr="호두정과" data-unit="12000"><span class="prod-emoji">🥜</span><span class="prod-name">Walnut Jeonggwa<small>호두정과</small></span><span class="prod-price">₩12,000/jar</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+      <div class="product-row" data-product="Medjool Dates" data-kr="데이츠" data-unit="5000"><span class="prod-emoji">🌴</span><span class="prod-name">Medjool Dates<small>데이츠</small></span><span class="prod-price">₩5,000/ea</span><div class="qty-control"><button class="qty-btn" onclick="changeQty(this,-1)">−</button><input class="qty-val" type="number" value="0" min="0" readonly><button class="qty-btn" onclick="changeQty(this,1)">+</button></div></div>
+    </div>
+    <div class="form-row" style="margin-top:1rem;">
+      <label>Event Purpose</label>
+      <select id="return-purpose"><option value="">Please select</option><option value="돌잔치">First Birthday</option><option value="결혼">Wedding</option><option value="회갑/칠순">60th/70th Birthday</option><option value="기업행사">Corporate Event</option><option value="기타">Other</option></select>
+    </div>
+    <div class="form-row"><label>Event Date</label><input type="date" id="return-event-date"></div>
+    <div class="form-row"><label>Flavor Preference</label><select id="return-flavor"><option value="혼합">Mixed</option><option value="플레인">Plain</option><option value="초코">Choco</option><option value="감태">Gamtae</option><option value="인절미">Injeolmi</option></select></div>
+    <div class="form-row"><label>Custom Sticker</label><select id="return-sticker"><option value="불필요">Not needed</option><option value="필요">Needed (+₩100/ea)</option></select></div>
   </div>
 
   <!-- CAKE OPTIONS -->
@@ -410,7 +448,33 @@ function setOrderType(el) {
   el.classList.add('active');
   orderType = el.dataset.type;
   orderTypeKr = el.dataset.kr;
-  document.getElementById('cake-section').style.display = orderType === 'cake' ? 'block' : 'none';
+
+  document.getElementById('section-normal').style.display = (orderType === 'general') ? 'block' : 'none';
+  document.getElementById('section-gift').style.display = (orderType === 'giftset') ? 'block' : 'none';
+  document.getElementById('section-return').style.display = (orderType === 'return') ? 'block' : 'none';
+  document.getElementById('cake-section').style.display = (orderType === 'cake') ? 'block' : 'none';
+
+  // Packaging per type
+  const pkgRibbon = document.getElementById('pkg-ribbon');
+  const pkgSticker = document.getElementById('pkg-sticker');
+  const pkgBojagi = document.getElementById('pkg-bojagi');
+  const pkgCakebox = document.getElementById('pkg-cakebox');
+  [pkgRibbon, pkgSticker, pkgBojagi, pkgCakebox].forEach(el => { el.checked = false; el.closest('.pkg-option').style.display = ''; });
+
+  if (orderType === 'cake') {
+    pkgRibbon.closest('.pkg-option').style.display = 'none';
+    pkgSticker.closest('.pkg-option').style.display = 'none';
+    pkgBojagi.closest('.pkg-option').style.display = 'none';
+    pkgCakebox.checked = true;
+  } else if (orderType === 'return') {
+    pkgBojagi.closest('.pkg-option').style.display = 'none';
+    pkgCakebox.closest('.pkg-option').style.display = 'none';
+  } else {
+    pkgCakebox.closest('.pkg-option').style.display = 'none';
+  }
+
+  document.querySelectorAll('.qty-val').forEach(v => v.value = '0');
+  document.querySelectorAll('.fl-qty').forEach(v => v.value = '0');
 }
 
 function setDelivery(el) {
@@ -428,6 +492,13 @@ function changeQty(btn, delta) {
   input.value = val;
 }
 
+function changeFlavorQty(btn, delta) {
+  const input = btn.parentElement.querySelector('.fl-qty');
+  let val = parseInt(input.value) + delta;
+  if (val < 0) val = 0;
+  input.value = val;
+}
+
 function generateOrder() {
   const name = document.getElementById('cust-name').value.trim();
   const phone = document.getElementById('cust-phone').value.trim();
@@ -435,17 +506,43 @@ function generateOrder() {
 
   const items = [];
   let subtotal = 0;
-  document.querySelectorAll('.product-row').forEach(row => {
-    const qty = parseInt(row.querySelector('.qty-val').value);
-    if (qty > 0) {
-      const en = row.dataset.product;
-      const kr = row.dataset.kr;
-      const unit = parseInt(row.dataset.unit);
-      const total = qty * unit;
-      subtotal += total;
-      items.push(`  · ${kr} (${en}) × ${qty}개 = ₩${total.toLocaleString()}`);
-    }
-  });
+  const activeSection = orderType === 'giftset' ? '#section-gift' : orderType === 'return' ? '#section-return' : '#section-normal';
+
+  if (orderType === 'general') {
+    document.querySelectorAll(`${activeSection} .product-group`).forEach(group => {
+      const product = group.dataset.product;
+      const en = group.dataset.en;
+      const unit = parseInt(group.dataset.unit);
+      const flavorDetails = [];
+      let totalQty = 0;
+      group.querySelectorAll('.flavor-row').forEach(row => {
+        const qty = parseInt(row.querySelector('.fl-qty').value);
+        if (qty > 0) {
+          const fname = row.querySelector('.fl-name').textContent;
+          flavorDetails.push(`${fname} ${qty}개`);
+          totalQty += qty;
+        }
+      });
+      if (totalQty > 0) {
+        const total = totalQty * unit;
+        subtotal += total;
+        items.push(`  · ${product} (${en}) × ${totalQty}개 = ₩${total.toLocaleString()}`);
+        items.push(`    (${flavorDetails.join(', ')})`);
+      }
+    });
+  } else {
+    document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
+      const qty = parseInt(row.querySelector('.qty-val')?.value || 0);
+      if (qty > 0) {
+        const en = row.dataset.product;
+        const kr = row.dataset.kr || en;
+        const unit = parseInt(row.dataset.unit);
+        const total = qty * unit;
+        subtotal += total;
+        items.push(`  · ${kr} (${en}) × ${qty}개 = ₩${total.toLocaleString()}`);
+      }
+    });
+  }
 
   let cakeInfo = '';
   if (orderType === 'cake') {
@@ -484,7 +581,28 @@ function generateOrder() {
 
   const receipt = document.getElementById('cust-receipt').value;
   const receiptNum = document.getElementById('cust-receipt-number').value.trim();
+  const receiptEmail = document.getElementById('cust-receipt-email').value.trim();
   const memo = document.getElementById('cust-memo').value.trim();
+
+  if (receipt === '거래명세서' && !receiptEmail) {
+    alert('Please enter your email for the transaction statement.');
+    return;
+  }
+
+  // Return gift extra info
+  let returnInfo = '';
+  if (orderType === 'return') {
+    const purpose = document.getElementById('return-purpose').value;
+    const eventDate = document.getElementById('return-event-date').value;
+    const flavor = document.getElementById('return-flavor').value;
+    const sticker = document.getElementById('return-sticker').value;
+    returnInfo = `\n💝 답례품 정보 (Favor Details)`;
+    if (purpose) returnInfo += `\n  · 용도: ${purpose}`;
+    if (eventDate) returnInfo += `\n  · 행사일: ${eventDate}`;
+    returnInfo += `\n  · 맛: ${flavor}`;
+    if (sticker === '필요') returnInfo += `\n  · 주문제작 스티커: 필요 (+₩100/개)`;
+    returnInfo += '\n';
+  }
 
   const now = new Date();
   const dateStr = now.getFullYear().toString() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
@@ -510,6 +628,7 @@ function generateOrder() {
   }
 
   if (cakeInfo) text += cakeInfo + '\n';
+  if (returnInfo) text += returnInfo;
 
   if (pkgs.length > 0) {
     text += `\n📦 포장\n  · ${pkgs.join('\n  · ')}\n`;
@@ -519,7 +638,8 @@ function generateOrder() {
 
   if (receipt !== '필요없음') {
     text += `\n🧾 증빙서류 (Tax Receipt)\n  · ${receipt}`;
-    if (receiptNum) text += `\n  · 번호: ${receiptNum}`;
+    if (receiptNum) text += `\n  · 발행번호: ${receiptNum}`;
+    if (receiptEmail) text += `\n  · 수신 이메일: ${receiptEmail}`;
     text += '\n';
   }
 
@@ -538,15 +658,21 @@ byssal.vercel.app/en 에서 주문
     receipt: receipt !== '필요없음' ? receipt : '',
     memo, timestamp: new Date().toISOString(), lang: 'en'
   };
-  document.querySelectorAll('.product-row').forEach(row => {
-    const qty = parseInt(row.querySelector('.qty-val').value);
-    if (qty > 0) {
-      orderData.items.push({ name: row.dataset.kr, nameEn: row.dataset.product, qty, unit: parseInt(row.dataset.unit) });
-    }
-  });
-  if (orderType === 'cake') {
-    orderData.cakeInfo = document.getElementById('cake-size').value;
+  if (orderType === 'general') {
+    document.querySelectorAll(`${activeSection} .product-group`).forEach(group => {
+      const product = group.dataset.product;
+      const unit = parseInt(group.dataset.unit);
+      let totalQty = 0;
+      group.querySelectorAll('.fl-qty').forEach(input => { totalQty += parseInt(input.value); });
+      if (totalQty > 0) orderData.items.push({ name: product, qty: totalQty, unit });
+    });
+  } else {
+    document.querySelectorAll(`${activeSection} .product-row`).forEach(row => {
+      const qty = parseInt(row.querySelector('.qty-val')?.value || 0);
+      if (qty > 0) orderData.items.push({ name: row.dataset.kr || row.dataset.product, qty, unit: parseInt(row.dataset.unit) });
+    });
   }
+  if (orderType === 'cake') orderData.cakeInfo = document.getElementById('cake-size').value;
   saveOrder(orderData);
 
   document.getElementById('order-text').textContent = text;
