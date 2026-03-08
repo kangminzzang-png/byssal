@@ -779,6 +779,22 @@ function setOrderType(el) {
   document.getElementById('section-return').style.display = (orderType === '답례품') ? 'block' : 'none';
   document.getElementById('cake-section').style.display = (orderType === '앙금떡케이크') ? 'block' : 'none';
 
+  // Show/hide packaging options based on order type
+  const isCake = orderType === '앙금떡케이크';
+  document.getElementById('pkg-ribbon').closest('.pkg-option').style.display = isCake ? 'none' : '';
+  document.getElementById('pkg-sticker').closest('.pkg-option').style.display = isCake ? 'none' : '';
+  document.getElementById('pkg-bojagi').closest('.pkg-option').style.display = isCake ? 'none' : '';
+  document.getElementById('pkg-cakebox').closest('.pkg-option').style.display = '';
+  // Auto-check cake box for cake orders
+  if (isCake) {
+    document.getElementById('pkg-ribbon').checked = false;
+    document.getElementById('pkg-sticker').checked = false;
+    document.getElementById('pkg-bojagi').checked = false;
+    document.getElementById('pkg-cakebox').checked = true;
+  } else {
+    document.getElementById('pkg-cakebox').checked = false;
+  }
+
   // Reset quantities when switching
   document.querySelectorAll('.qty-val').forEach(v => v.value = '0');
 }
