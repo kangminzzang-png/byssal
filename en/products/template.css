@@ -45,6 +45,27 @@ nav {
   align-items: center;
 }
 
+/* ── FLOATING ORDER BUTTON ── */
+.floating-order-btn {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  z-index: 99;
+  padding: 0.9rem 1.8rem;
+  background: var(--accent);
+  color: var(--white);
+  font-family: var(--serif-kr);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(138,111,85,0.3);
+  transition: all 0.3s;
+}
+.floating-order-btn:hover {
+  background: #a8917a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(138,111,85,0.4);
+}
+
 .product-img {
   aspect-ratio: 1; background: var(--bg-warm);
   display: flex; align-items: center; justify-content: center;
