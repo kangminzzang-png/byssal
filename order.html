@@ -486,13 +486,22 @@
 
 <script>
 // ═══════════════════════════════════════
-// 🔒 주문 차단 날짜 설정 (YYYY-MM-DD 형식)
-// 주문이 많은 날은 여기에 추가하세요
-const BLOCKED_DATES = [
-  // '2026-03-15',
-  // '2026-03-16',
-];
+// 🔒 주문 차단 — 어드민 페이지에서 관리됩니다
+let BLOCKED_DATES = [];
+let ORDER_NOTICE = '';
 const BLOCKED_MESSAGE = '죄송합니다. 해당 날짜는 주문이 마감되었습니다. 다른 날짜를 선택해주세요.';
+const CONFIG_URL = 'https://jsonblob.com/api/jsonBlob/019ccbd9-9baa-7bd9-b9df-c4be1c19c0b2';
+
+fetch(CONFIG_URL).then(r=>r.json()).then(cfg => {
+  BLOCKED_DATES = cfg.blocked_dates || [];
+  ORDER_NOTICE = cfg.notice || '';
+  if (ORDER_NOTICE) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#8a6f55;color:#fff;text-align:center;padding:0.8rem 1.5rem;font-size:0.8rem;position:fixed;top:60px;left:0;right:0;z-index:99;';
+    banner.textContent = '📢 ' + ORDER_NOTICE;
+    document.body.appendChild(banner);
+  }
+}).catch(()=>{});
 // ═══════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {

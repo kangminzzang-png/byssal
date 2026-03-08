@@ -348,12 +348,22 @@
 
 <script>
 // ═══════════════════════════════════════
-// 🔒 Blocked dates (YYYY-MM-DD)
-const BLOCKED_DATES = [
-  // '2026-03-15',
-  // '2026-03-16',
-];
+// 🔒 Blocked dates — managed via admin panel
+let BLOCKED_DATES = [];
+let ORDER_NOTICE = '';
 const BLOCKED_MESSAGE = 'Sorry, orders for this date are fully booked. Please choose another date.';
+const CONFIG_URL = 'https://jsonblob.com/api/jsonBlob/019ccbd9-9baa-7bd9-b9df-c4be1c19c0b2';
+
+fetch(CONFIG_URL).then(r=>r.json()).then(cfg => {
+  BLOCKED_DATES = cfg.blocked_dates || [];
+  ORDER_NOTICE = cfg.notice || '';
+  if (ORDER_NOTICE) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#8a6f55;color:#fff;text-align:center;padding:0.8rem 1.5rem;font-size:0.8rem;position:fixed;top:60px;left:0;right:0;z-index:99;';
+    banner.textContent = '📢 ' + ORDER_NOTICE;
+    document.body.appendChild(banner);
+  }
+}).catch(()=>{});
 // ═══════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
