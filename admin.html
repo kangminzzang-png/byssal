@@ -129,6 +129,26 @@
   .order-row .o-amount { font-weight: 500; }
   .order-row .o-date { color: var(--dim); width: 75px; text-align: right; }
 
+  /* HISTORY */
+  .history-filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .history-filters input, .history-filters select {
+    padding: 0.4rem 0.6rem; border: 1px solid var(--subtle); font-family: inherit; font-size: 0.75rem;
+  }
+  .history-filters input:focus, .history-filters select:focus { outline: none; border-color: var(--accent); }
+  .history-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+  .history-table th { text-align: left; padding: 0.5rem 0.4rem; border-bottom: 2px solid var(--accent); font-size: 0.6rem; letter-spacing: 0.1em; color: var(--accent); font-weight: 500; }
+  .history-table td { padding: 0.45rem 0.4rem; border-bottom: 1px solid var(--subtle); }
+  .history-table tr:hover td { background: rgba(138,111,85,0.04); }
+  .history-stats { display: flex; gap: 1.5rem; margin-bottom: 1rem; font-size: 0.75rem; color: var(--dim); }
+  .history-stats strong { color: var(--accent); }
+  .history-source { display: inline-block; padding: 0.1rem 0.4rem; font-size: 0.55rem; letter-spacing: 0.05em; border-radius: 2px; }
+  .history-source.ss { background: #e8f5e9; color: #2e7d32; }
+  .history-source.web { background: #e3f2fd; color: #1565c0; }
+  .history-source.kt { background: #fff3e0; color: #e65100; }
+  .page-nav { display: flex; gap: 0.3rem; margin-top: 1rem; justify-content: center; }
+  .page-nav button { padding: 0.3rem 0.7rem; border: 1px solid var(--subtle); background: var(--white); font-family: inherit; font-size: 0.7rem; cursor: pointer; }
+  .page-nav button.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
+
   /* SAVE BAR */
   .save-bar { position: fixed; bottom: 0; left: var(--sidebar-w); right: 0; padding: 0.8rem 2rem; background: var(--accent); display: none; z-index: 50; }
   .save-bar.visible { display: flex; align-items: center; justify-content: space-between; }
@@ -177,6 +197,7 @@
     <nav class="sidebar-nav">
       <div class="nav-group-label">주문 관리</div>
       <div class="nav-item active" onclick="switchTab('orders',this)"><span class="nav-icon">📋</span>주문 현황</div>
+      <div class="nav-item" onclick="switchTab('history',this)"><span class="nav-icon">📜</span>주문 이력</div>
       <div class="nav-item" onclick="switchTab('blocked',this)"><span class="nav-icon">🔒</span>날짜 차단</div>
       <div class="nav-item" onclick="switchTab('notice',this)"><span class="nav-icon">📢</span>공지사항</div>
 
@@ -207,6 +228,44 @@
       <div class="section">
         <h2>🕐 최근 주문</h2>
         <div id="recent-orders"></div>
+      </div>
+    </div>
+
+    <!-- TAB: HISTORY -->
+    <div class="tab-panel" id="tab-history">
+      <div class="page-header"><h1>📜 주문 이력</h1><p>전체 주문 내역을 검색하고 조회합니다</p></div>
+      <div class="section">
+        <div class="history-filters">
+          <input type="text" id="hist-search" placeholder="🔍 주문번호, 이름, 상품 검색" style="flex:2; min-width:180px;" oninput="renderHistory()">
+          <select id="hist-source" onchange="renderHistory()">
+            <option value="">전체 채널</option>
+            <option value="smartstore">스마트스토어</option>
+            <option value="web">홈페이지</option>
+            <option value="kakao">카카오톡</option>
+          </select>
+          <input type="date" id="hist-from" onchange="renderHistory()">
+          <span style="font-size:0.7rem; color:var(--dim); align-self:center;">~</span>
+          <input type="date" id="hist-to" onchange="renderHistory()">
+        </div>
+        <div class="history-stats" id="hist-stats"></div>
+        <div style="overflow-x:auto;">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>날짜</th>
+                <th>주문번호</th>
+                <th>채널</th>
+                <th>주문자</th>
+                <th>상품</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>옵션/메모</th>
+              </tr>
+            </thead>
+            <tbody id="hist-body"></tbody>
+          </table>
+        </div>
+        <div class="page-nav" id="hist-pages"></div>
       </div>
     </div>
 
@@ -353,6 +412,7 @@ function switchTab(id, el) {
   document.getElementById('sidebar').classList.remove('open');
   // Re-render charts when switching to them
   if (id === 'dashboard' || id === 'products-analytics') renderDashboard();
+  if (id === 'history') renderHistory();
 }
 
 // ── CONFIG ──
@@ -447,6 +507,7 @@ async function loadOrders() {
     allOrders = data.orders || [];
     renderSummary();
     renderRecentOrders();
+    renderHistory();
     renderDashboard();
   } catch(e) { console.error('loadOrders error:', e); }
 }
@@ -540,6 +601,79 @@ function renderDashboard() {
   filtered.forEach(o => (o.items||[]).forEach(item => { const n=item.name||'기타'; prodRevMap[n]=(prodRevMap[n]||0)+(item.qty*item.unit); }));
   const colors = ['#8a6f55','#a8917a','#c4a882','#d8cfc4','#e7ded3','#6b5542','#b8a18c','#957a62','#c9b8a5'];
   if (pc) window._pc = new Chart(pc, { type:'doughnut', data:{ labels:Object.keys(prodRevMap), datasets:[{data:Object.values(prodRevMap), backgroundColor:colors.slice(0,Object.keys(prodRevMap).length), borderWidth:2, borderColor:'#fff'}] }, options:{ responsive:true, plugins:{ legend:{position:'bottom',labels:{font:{size:11},padding:12}}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: ₩${ctx.parsed.toLocaleString()}`}} } } });
+}
+
+// ── HISTORY ──
+let histPage = 0;
+const HIST_PER_PAGE = 20;
+
+function renderHistory() {
+  const search = (document.getElementById('hist-search').value || '').toLowerCase();
+  const source = document.getElementById('hist-source').value;
+  const fromDate = document.getElementById('hist-from').value;
+  const toDate = document.getElementById('hist-to').value;
+
+  let filtered = [...allOrders];
+
+  // Filter by source
+  if (source === 'smartstore') filtered = filtered.filter(o => o.source === 'smartstore');
+  else if (source === 'web') filtered = filtered.filter(o => !o.source || o.source === 'web');
+  else if (source === 'kakao') filtered = filtered.filter(o => o.source === 'kakao');
+
+  // Filter by date
+  if (fromDate) filtered = filtered.filter(o => o.timestamp && o.timestamp.slice(0,10) >= fromDate);
+  if (toDate) filtered = filtered.filter(o => o.timestamp && o.timestamp.slice(0,10) <= toDate);
+
+  // Search
+  if (search) {
+    filtered = filtered.filter(o => {
+      const haystack = [o.orderNum, o.name, o.memo, ...(o.items||[]).map(i=>i.name)].join(' ').toLowerCase();
+      return haystack.includes(search);
+    });
+  }
+
+  // Sort by date descending
+  filtered.sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+
+  // Stats
+  const totalAmt = filtered.reduce((s,o) => s + (o.subtotal||0), 0);
+  document.getElementById('hist-stats').innerHTML =
+    `검색 결과: <strong>${filtered.length}건</strong> · 합계: <strong>₩${totalAmt.toLocaleString()}</strong>`;
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filtered.length / HIST_PER_PAGE));
+  if (histPage >= totalPages) histPage = totalPages - 1;
+  const start = histPage * HIST_PER_PAGE;
+  const pageItems = filtered.slice(start, start + HIST_PER_PAGE);
+
+  // Render table
+  const tbody = document.getElementById('hist-body');
+  tbody.innerHTML = pageItems.length ? pageItems.map(o => {
+    const srcClass = o.source === 'smartstore' ? 'ss' : o.source === 'kakao' ? 'kt' : 'web';
+    const srcLabel = o.source === 'smartstore' ? '스마트스토어' : o.source === 'kakao' ? '카카오톡' : '홈페이지';
+    const items = (o.items||[]).map(i => i.name).join(', ');
+    const qty = (o.items||[]).reduce((s,i) => s + (i.qty||0), 0);
+    const date = o.timestamp ? o.timestamp.slice(0,10) : '—';
+    return `<tr>
+      <td>${date}</td>
+      <td style="color:var(--accent);font-weight:500;">${o.orderNum||'—'}</td>
+      <td><span class="history-source ${srcClass}">${srcLabel}</span></td>
+      <td>${o.name||'—'}</td>
+      <td>${items||'—'}</td>
+      <td>${qty}</td>
+      <td style="font-weight:500;">₩${(o.subtotal||0).toLocaleString()}</td>
+      <td style="font-size:0.6rem;color:var(--dim);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${(o.memo||'').replace(/"/g,'&quot;')}">${o.memo||''}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--dim);padding:2rem;">주문 내역이 없습니다</td></tr>';
+
+  // Page nav
+  const pagesEl = document.getElementById('hist-pages');
+  if (totalPages <= 1) { pagesEl.innerHTML = ''; return; }
+  let phtml = '';
+  for (let i = 0; i < totalPages; i++) {
+    phtml += `<button class="${i===histPage?'active':''}" onclick="histPage=${i};renderHistory()">${i+1}</button>`;
+  }
+  pagesEl.innerHTML = phtml;
 }
 
 function showToast(msg, isError) {
