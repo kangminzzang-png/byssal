@@ -147,6 +147,12 @@ nav {
   text-align: center;
 }
 
+.flavor-card .flavor-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
 .flavor-card h4 {
   font-size: 0.9rem; font-weight: 500;
   margin-bottom: 0.3rem;
