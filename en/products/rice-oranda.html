@@ -5,40 +5,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rice Oranda — BySsal</title>
 <link rel="stylesheet" href="template.css">
+<style>
+  .product-gallery {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    padding: 0 3rem; max-width: 1100px; margin: -2rem auto 3rem;
+  }
+  .product-gallery img {
+    width: 100%; aspect-ratio: 1; object-fit: cover;
+    border: 1px solid rgba(46,42,39,0.08);
+    transition: transform 0.4s;
+  }
+  .product-gallery img:hover { transform: scale(1.02); }
+  .highlight-box {
+    background: rgba(138,111,85,0.06); border-left: 3px solid #8a6f55;
+    padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 0.85rem;
+    line-height: 2; color: #2e2a27;
+  }
+  .highlight-box strong { color: #8a6f55; }
+  @media (max-width: 768px) {
+    .product-gallery { padding: 0 1.5rem; grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 <nav>
   <a href="../" class="nav-logo">BySsal</a>
   <a href="../#menu" class="nav-back">← Back to Menu</a>
 </nav>
+
 <div class="product-hero">
-  <div class="product-img"><img src="../../assets/img/rice-oranda.jpg" alt="Rice Oranda"></div>
+  <div class="product-img"><img src="../../assets/img/oranda-gamtae-closeup.jpg" alt="Rice Oranda close-up"></div>
   <div class="product-info">
     <h1>Rice Oranda</h1>
     <div class="product-en">쌀오란다</div>
     <div class="product-price">₩1,900 each</div>
     <p class="product-desc">
-      Traditional puffed rice crackers made with domestic Korean rice, glutinous rice, and barley,
-      bound with 100% rice syrup. Gluten-free and gentle on the stomach, available in five flavors.
+      Watch the rice syrup stretch as you pull it apart — this is no ordinary snack.<br><br>
+      Handcrafted from domestically grown puffed rice, glutinous rice, and barley, bound with 100% rice syrup.
+      No wheat flour. No butter. No preservatives. Just pure rice goodness.
     </p>
     <div class="product-tags">
       <span class="product-tag">Gluten Free</span>
       <span class="product-tag">100% Rice</span>
       <span class="product-tag">Handmade</span>
+      <span class="product-tag">No Preservatives</span>
     </div>
   </div>
 </div>
+
+<div class="product-gallery">
+  <img src="../../assets/img/oranda-all-flavors.jpg" alt="Five flavors of Rice Oranda">
+  <img src="../../assets/img/rice-oranda-spread.jpg" alt="Handmade Rice Oranda assortment">
+</div>
+
 <div class="product-details">
   <div class="detail-section">
-    <h3>Flavors</h3>
-    <div class="flavor-grid">
-      <div class="flavor-card"><div class="flavor-emoji">🌿</div><h4>Gamtae (Seaweed)</h4><p>Premium seaweed for a savory umami finish</p></div>
-      <div class="flavor-card"><div class="flavor-emoji">🥜</div><h4>Nuts</h4><p>Sweet-tart cranberries and nutritious pumpkin seeds</p></div>
-      <div class="flavor-card"><div class="flavor-emoji">☕</div><h4>Coffee Peanut</h4><p>Nutty peanuts with rich coffee aroma</p></div>
-      <div class="flavor-card"><div class="flavor-emoji">🖤</div><h4>Black Sesame</h4><p>Sweet and nutty black sesame superfood</p></div>
-      <div class="flavor-card"><div class="flavor-emoji">🫘</div><h4>Injeolmi</h4><p>Classic soybean powder coating, traditional flavor</p></div>
+    <div class="highlight-box">
+      💡 <strong>What makes BySsal's Oranda different?</strong><br>
+      Most oranda is deep-fried with wheat batter.<br>
+      Ours is <strong>100% puffed rice</strong> bound with <strong>pure rice syrup</strong> — never fried.<br>
+      Light, easy to digest, and enjoyed by everyone from toddlers to grandparents.
     </div>
   </div>
+
+  <div class="detail-section">
+    <h3>Five Flavors</h3>
+    <div class="flavor-grid">
+      <div class="flavor-card"><div class="flavor-emoji">🌿</div><h4>Gamtae (Seaweed)</h4><p>Whole premium sea lettuce wrapped around crispy rice puffs. A savory-sweet ocean bite.</p></div>
+      <div class="flavor-card"><div class="flavor-emoji">🥜</div><h4>Nuts</h4><p>Sweet-tart cranberries + nutty pumpkin seeds. Deeper flavor with every bite.</p></div>
+      <div class="flavor-card"><div class="flavor-emoji">☕</div><h4>Coffee Peanut</h4><p>Subtle roasted coffee aroma meets rich peanuts. A grown-up treat.</p></div>
+      <div class="flavor-card"><div class="flavor-emoji">🖤</div><h4>Black Sesame</h4><p>Generous Korean black sesame coating. Sweet, nutty, and deeply satisfying.</p></div>
+      <div class="flavor-card"><div class="flavor-emoji">🫘</div><h4>Injeolmi</h4><p>Roasted soybean powder coating. One bite transports you to grandma's kitchen.</p></div>
+    </div>
+  </div>
+
   <div class="detail-section">
     <h3>Gift Sets</h3>
     <table class="price-table">
@@ -52,32 +92,31 @@
     </table>
     <p style="margin-top:1rem; font-size:0.8rem;">※ Holiday band included · Bojagi wrap additional (+₩5,000)</p>
   </div>
+
   <div class="detail-section">
-    <h3>Ingredients</h3>
-    <ul>
-      <li>Domestic Korean rice, glutinous rice, barley</li>
-      <li>100% rice syrup</li>
-      <li>No wheat flour · Gluten FREE</li>
-    </ul>
-  </div>
-  <div class="detail-section">
-    <h3>Storage</h3>
-    <ul>
-      <li>Room temperature: 1 week</li>
-      <li>Refrigerated: 2 weeks</li>
-      <li>Frozen: 1 month</li>
-    </ul>
-  </div>
-  <div class="detail-section">
-    <h3>How to Order</h3>
-    <ul>
-      <li>Order via KakaoTalk channel "바이쌀"</li>
-      <li>Also available on Naver Smart Store</li>
-      <li>Nationwide delivery (₩4,000 shipping)</li>
-      <li>In-store pickup available (Songdo, Incheon)</li>
-    </ul>
+    <h3>Ingredients & Storage</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+      <div>
+        <h4 style="font-size:0.75rem; color:#8a6f55; margin-bottom:0.5rem;">Ingredients</h4>
+        <ul>
+          <li>Domestic Korean rice, glutinous rice, barley</li>
+          <li>100% rice syrup</li>
+          <li>No wheat · Gluten FREE</li>
+          <li>No butter · No preservatives</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:0.75rem; color:#8a6f55; margin-bottom:0.5rem;">Storage</h4>
+        <ul>
+          <li>Room temp: 1 week</li>
+          <li>Refrigerated: 2 weeks</li>
+          <li>Frozen: 1 month</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
+
 <footer class="product-footer">
   <div class="footer-logo">BySsal</div>
   <p>A moment of calm. · © 2026</p>
